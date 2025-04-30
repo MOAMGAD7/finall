@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.banking.ChatBotController"
+      alignment="CENTER" spacing="15" styleClass="root">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- العنوان -->
+    <Label text="Banking Assistant" styleClass="title"/>
+
+    <!-- تعليمات -->
+    <Label text="Ask a question about your banking services:" styleClass="subtitle"/>
+
+    <!-- منطقة المحادثة -->
+    <ScrollPane fx:id="chatScrollPane" fitToWidth="true" styleClass="chat-scroll-pane">
+        <content>
+            <VBox fx:id="chatHistory" spacing="10" styleClass="chat-history"/>
+        </content>
+    </ScrollPane>
+
+    <!-- منطقة الإدخال -->
+    <HBox alignment="CENTER" spacing="10">
+        <TextField fx:id="questionField" promptText="Type your question..." styleClass="question-field" prefWidth="400"/>
+        <Button text="Ask Chatbot" onAction="#handleAskChatbot" styleClass="button"/>
+        <Button text="Clear Chat" onAction="#clearChat" styleClass="button-secondary"/>
+    </HBox>
+
+    <!-- زرار العودة -->
+    <Button text="Back to Dashboard" onAction="#goToDashboard" styleClass="button-back"/>
+</VBox>
