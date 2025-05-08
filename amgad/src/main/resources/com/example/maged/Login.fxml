@@ -12,88 +12,108 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane style="-fx-background-color: #f5f4fa;" stylesheets="@Login.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.banking.LoginController">
+<BorderPane style="-fx-background-color: transparent;" stylesheets="@Login.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.banking.LoginController">
     <center>
-        <VBox alignment="CENTER" maxHeight="380.0" maxWidth="340.0" minHeight="380.0" minWidth="340.0" prefHeight="380.0" prefWidth="340.0" spacing="15" style="-fx-background-color: white; -fx-background-radius: 10px; -fx-padding: 20px;">
+        <VBox alignment="CENTER" maxWidth="400.0" minWidth="300.0" prefWidth="360.0" spacing="15" style="-fx-background-color: rgba(0, 0, 0, 0.25); -fx-background-radius: 15px; -fx-padding: 25px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 15, 0, 0, 0); -fx-border-color: rgba(255,255,255,0.4); -fx-border-width: 1; -fx-border-radius: 15px;">
             <children>
                 <!-- Title with Icon -->
-                <HBox alignment="CENTER" prefHeight="45.0" prefWidth="300.0" spacing="10">
+                <HBox alignment="CENTER" prefHeight="50.0" spacing="10" style="-fx-background-color: rgba(0,0,0,0.25); -fx-background-radius: 15px; -fx-padding: 5;">
                     <children>
-                        <Label text="Login" textFill="#008cff">
+                        <FontAwesomeIconView fill="#00c3ff" glyphName="BANK" size="30" />
+                        <Label text="Login" textFill="#ffffff" style="-fx-background-color: rgba(0,0,0,0.25); -fx-background-radius: 10; -fx-padding: 5 20;">
                             <font>
-                                <Font name="System Bold" size="26.0" />
+                                <Font name="System Bold" size="28.0" />
                             </font>
+                            <effect>
+                                <javafx.scene.effect.Glow level="0.6" />
+                            </effect>
                         </Label>
                     </children>
+                    <VBox.margin>
+                        <Insets bottom="10.0" />
+                    </VBox.margin>
                 </HBox>
 
                 <!-- Username Field with Icon -->
-                <HBox alignment="CENTER" prefHeight="35.0" prefWidth="260.0" spacing="10">
+                <HBox alignment="CENTER" prefHeight="45.0" spacing="10" style="-fx-background-color: rgba(0,0,0,0.25); -fx-background-radius: 12px; -fx-padding: 8 12;">
                     <children>
-                        <FontAwesomeIconView fill="#008cff" glyphName="USER" size="25" />
-                        <TextField fx:id="usernameField" prefHeight="35.0" prefWidth="240.0" promptText="Username" style="-fx-font-size: 13px; -fx-background-radius: 10px;">
-                            <VBox.margin>
-                                <Insets left="20.0" right="20.0" />
-                            </VBox.margin>
+                        <FontAwesomeIconView fill="#00ddff" glyphName="USER" size="26" />
+                        <TextField fx:id="usernameField" promptText="Username" HBox.hgrow="ALWAYS" style="-fx-font-size: 14px; -fx-background-radius: 10px; -fx-background-color: rgba(0,0,0,0.25); -fx-border-color: rgba(0,191,255,0.7); -fx-border-radius: 10px; -fx-border-width: 1.5px; -fx-text-fill: #ffffff; -fx-prompt-text-fill: rgba(255,255,255,0.7); -fx-padding: 8 12;">
                         </TextField>
                     </children>
+                    <VBox.margin>
+                        <Insets top="5.0" />
+                    </VBox.margin>
                 </HBox>
-
+                
                 <!-- Password Field with Icon -->
-                <HBox alignment="CENTER" prefHeight="35.0" prefWidth="260.0" spacing="10">
+                <HBox alignment="CENTER" prefHeight="45.0" spacing="10" style="-fx-background-color: rgba(0,0,0,0.25); -fx-background-radius: 12px; -fx-padding: 8 12;">
                     <children>
-                        <FontAwesomeIconView fill="#008cff" glyphName="LOCK" size="25" />
-                        <PasswordField fx:id="passwordField" prefHeight="35.0" prefWidth="240.0" promptText="Password" style="-fx-font-size: 13px; -fx-background-radius: 10px;">
-                            <VBox.margin>
-                                <Insets left="20.0" right="20.0" />
-                            </VBox.margin>
+                        <FontAwesomeIconView fill="#00ddff" glyphName="LOCK" size="26" />
+                        <PasswordField fx:id="passwordField" promptText="Password" HBox.hgrow="ALWAYS" style="-fx-font-size: 14px; -fx-background-radius: 10px; -fx-background-color: rgba(0,0,0,0.25); -fx-border-color: rgba(0,191,255,0.7); -fx-border-radius: 10px; -fx-border-width: 1.5px; -fx-text-fill: #ffffff; -fx-prompt-text-fill: rgba(255,255,255,0.7); -fx-padding: 8 12;">
                         </PasswordField>
                     </children>
+                    <VBox.margin>
+                        <Insets top="5.0" />
+                    </VBox.margin>
                 </HBox>
 
                 <!-- Forget Password link -->
-                <HBox alignment="CENTER_RIGHT" prefHeight="18.0" prefWidth="300.0">
+                <HBox alignment="CENTER_RIGHT" style="-fx-background-color: rgba(0,0,0,0.25); -fx-background-radius: 10px;">
                     <children>
-                        <Hyperlink fx:id="forgetPasswordLink" onAction="#handleForgetPassword" prefHeight="10.0" prefWidth="112.0" style="-fx-font-size: 13px; -fx-text-fill: #008cff;" text="Forget Password?">
-                            <HBox.margin>
-                                <Insets left="20.0" />
-                            </HBox.margin>
+                        <Hyperlink fx:id="forgetPasswordLink" onAction="#handleForgetPassword" style="-fx-font-size: 13px; -fx-text-fill: #00ddff; -fx-underline: true; -fx-font-weight: bold;" text="Forget Password?">
+                            <graphic>
+                                <FontAwesomeIconView fill="#00ddff" glyphName="QUESTION_CIRCLE" size="14" />
+                            </graphic>
                         </Hyperlink>
                     </children>
                     <VBox.margin>
-                        <Insets />
+                        <Insets top="2.0" />
                     </VBox.margin>
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="10.0" top="5.0" />
+                    </padding>
                 </HBox>
-
+                
                 <!-- Login Button -->
-                <Button fx:id="loginButton" onAction="#handleLogin" prefHeight="35.0" prefWidth="150.0" style="-fx-background-color: #008cff; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 15px;" styleClass="loginbutton" stylesheets="@Login.css" text="Login">
+                <Button fx:id="loginButton" onAction="#handleLogin" prefHeight="45.0" prefWidth="180.0" style="-fx-background-color: linear-gradient(to bottom, #00a2ff, #0066cc); -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 22px; -fx-effect: dropshadow(gaussian, rgba(0,140,255,0.8), 12, 0, 0, 0);" styleClass="loginbutton" stylesheets="@Login.css" text="LOGIN">
+                    <graphic>
+                        <FontAwesomeIconView fill="WHITE" glyphName="SIGN_IN" size="18" />
+                    </graphic>
                     <VBox.margin>
-                        <Insets />
+                        <Insets top="15.0" bottom="5.0" />
                     </VBox.margin>
                 </Button>
-
+                
                 <!-- Sign up -->
-                <HBox alignment="CENTER" prefHeight="26.0" prefWidth="260.0">
+                <HBox alignment="CENTER" style="-fx-background-color: rgba(0,0,0,0.25); -fx-background-radius: 12px; -fx-padding: 8 10;">
                     <children>
-                        <Label prefHeight="18.0" prefWidth="125.0" text="Don't have an account?">
-                            <HBox.margin>
-                                <Insets />
-                            </HBox.margin>
+                        <Label text="Don't have an account?" style="-fx-text-fill: #ffffff; -fx-font-weight: bold;">
                             <font>
-                                <Font size="11.0" />
+                                <Font size="13.0" />
                             </font>
                         </Label>
-                        <Hyperlink onAction="#switchToSignup" prefHeight="24.0" prefWidth="67.0" text="Sign UP">
+                        <Hyperlink onAction="#switchToSignup" text="Sign Up" style="-fx-text-fill: #00ddff; -fx-font-weight: bold; -fx-underline: true; -fx-font-size: 13px;">
+                            <graphic>
+                                <FontAwesomeIconView fill="#00ddff" glyphName="USER_PLUS" size="14" />
+                            </graphic>
                             <HBox.margin>
-                                <Insets />
+                                <Insets left="5.0" />
                             </HBox.margin>
                         </Hyperlink>
                     </children>
                     <VBox.margin>
-                        <Insets left="30.0" />
+                        <Insets top="5.0" />
                     </VBox.margin>
                 </HBox>
-                <Label fx:id="errorLabel" alignment="CENTER" prefHeight="30.0" prefWidth="253.0" />
+                <Label fx:id="errorLabel" alignment="CENTER" wrapText="true" prefHeight="40.0" style="-fx-text-fill: #ff6347; -fx-font-weight: bold; -fx-background-color: rgba(0,0,0,0.25); -fx-background-radius: 8px; -fx-padding: 5;">
+                    <graphic>
+                        <FontAwesomeIconView fx:id="errorIcon" fill="#ff6347" glyphName="EXCLAMATION_TRIANGLE" size="16" />
+                    </graphic>
+                    <VBox.margin>
+                        <Insets top="5.0" />
+                    </VBox.margin>
+                </Label>
             </children>
         </VBox>
     </center>

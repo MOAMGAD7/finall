@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -17,6 +18,10 @@ public class ChangePasswordController {
     @FXML private TextField newPasswordField;
     @FXML private TextField confirmPasswordField;
     @FXML private Label errorLabel;
+    
+    // متغيرات للتحكم في سحب النافذة
+    private double xOffset = 0;
+    private double yOffset = 0;
 
     @FXML
     protected void handleChangePassword(ActionEvent event) throws IOException {
@@ -68,5 +73,39 @@ public class ChangePasswordController {
         stage.setScene(scene);
         stage.setTitle("Login");
         stage.show();
+    }
+    
+    // طرق التحكم في النافذة
+    
+    @FXML
+    protected void handleMousePressed(MouseEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        xOffset = stage.getX() - event.getScreenX();
+        yOffset = stage.getY() - event.getScreenY();
+    }
+    
+    @FXML
+    protected void handleMouseDragged(MouseEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setX(event.getScreenX() + xOffset);
+        stage.setY(event.getScreenY() + yOffset);
+    }
+    
+    @FXML
+    protected void handleClose(ActionEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.close();
+    }
+    
+    @FXML
+    protected void handleMinimize(ActionEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setIconified(true);
+    }
+    
+    @FXML
+    protected void handleMaximize(ActionEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setMaximized(!stage.isMaximized());
     }
 }
