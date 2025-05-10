@@ -1,0 +1,15 @@
+//
+
+.menu-item:hover {
+    -fx-background-color: rgba(200, 200, 200, 0.2); /* Semi-transparent gray */
+    -fx-background-radius: 25;
+    -fx-underline: true;    /* خط تحت النص */
+    -fx-cursor: hand;       /* شكل اليد عند المرور */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 8, 0.0, 0, 3);
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+}
+
+.menu-item Label {
+    -fx-font-weight: bold;
+}

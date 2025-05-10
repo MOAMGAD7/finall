@@ -3,11 +3,35 @@ package com.banking;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
+import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.GaussianBlur;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.stage.Screen;
+import javafx.scene.effect.GaussianBlur;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import jakarta.mail.*;
@@ -88,9 +112,41 @@ public class VerifyEmailController {
             // تحميل الصفحة المناسبة
             Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
+            
+            // تحميل خلفية الصورة
+            Image backgroundImage = new Image(getClass().getResourceAsStream("/back.jpg"));
+            ImageView backgroundView = new ImageView(backgroundImage);
+            
+            // الحصول على أبعاد الشاشة
+            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+            double screenWidth = screenBounds.getWidth();
+            double screenHeight = screenBounds.getHeight();
+            
+            // ضبط الخلفية لتناسب الشاشة
+            backgroundView.setFitWidth(screenWidth);
+            backgroundView.setFitHeight(screenHeight);
+            backgroundView.setPreserveRatio(false);
+            backgroundView.setEffect(new GaussianBlur(20));
+            
+            // إنشاء طبقة زرقاء شفافة
+            Region blueOverlay = new Region();
+            blueOverlay.setBackground(new Background(new BackgroundFill(
+                    Color.rgb(0, 120, 255, 0.2),
+                    CornerRadii.EMPTY,
+                    Insets.EMPTY
+            )));
+            blueOverlay.setEffect(new GaussianBlur(20));
+            blueOverlay.setPrefSize(screenWidth, screenHeight);
+            
+            // تجميع الخلفية والطبقة الشفافة وواجهة المستخدم
+            StackPane stackPane = new StackPane();
+            stackPane.getChildren().addAll(backgroundView, blueOverlay, root);
+            
+            // إنشاء المشهد
+            Scene scene = new Scene(stackPane);
             scene.getStylesheets().clear();
             scene.getStylesheets().add(session.isDarkMode() ? "/com/example/maged/DarkMode.css" : "/com/example/maged/LightMode.css");
+            
             stage.setScene(scene);
             stage.setTitle(title);
             stage.show();
@@ -110,10 +166,42 @@ public class VerifyEmailController {
         // التنقل مباشرة إلى صفحة الـ Login
         Parent root = FXMLLoader.load(getClass().getResource("/com/example/maged/Login.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root);
+        
+        // Load background image
+        Image backgroundImage = new Image(getClass().getResourceAsStream("/back.jpg"));
+        ImageView backgroundView = new ImageView(backgroundImage);
+        
+        // Get screen dimensions
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        double screenWidth = screenBounds.getWidth();
+        double screenHeight = screenBounds.getHeight();
+        
+        // Fit background to screen
+        backgroundView.setFitWidth(screenWidth);
+        backgroundView.setFitHeight(screenHeight);
+        backgroundView.setPreserveRatio(false);
+        backgroundView.setEffect(new GaussianBlur(20));
+        
+        // Create a transparent blue overlay
+        Region blueOverlay = new Region();
+        blueOverlay.setBackground(new Background(new BackgroundFill(
+                Color.rgb(0, 120, 255, 0.2),
+                CornerRadii.EMPTY,
+                Insets.EMPTY
+        )));
+        blueOverlay.setEffect(new GaussianBlur(20));
+        blueOverlay.setPrefSize(screenWidth, screenHeight);
+        
+        // Stack background, overlay, and FXML UI
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().addAll(backgroundView, blueOverlay, root);
+        
+        // Create the scene
+        Scene scene = new Scene(stackPane);
         UserSession session = UserSession.getInstance();
         scene.getStylesheets().clear();
         scene.getStylesheets().add(session.isDarkMode() ? "/com/example/maged/DarkMode.css" : "/com/example/maged/LightMode.css");
+        
         stage.setScene(scene);
         stage.setTitle("Login");
         stage.show();

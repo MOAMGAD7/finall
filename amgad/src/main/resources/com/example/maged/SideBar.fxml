@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
@@ -22,7 +21,7 @@
                     <children>
                         <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="280.0" spacing="12" styleClass="menu-item">
                             <FontAwesomeIconView fill="WHITE" glyphName="HOME" size="24" />
-                            <Label fx:id="homeLabel" text="Home" textFill="WHITE" onMouseClicked="#goToHome">
+                            <Label text="Home" textFill="WHITE">
                                 <font>
                                     <Font name="System Regular" size="16.0" />
                                 </font>
@@ -30,7 +29,7 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="280.0" spacing="12" styleClass="menu-item">
                             <FontAwesomeIconView fill="WHITE" glyphName="USER" size="24" />
-                            <Label fx:id="accountsLabel" text="Accounts" textFill="WHITE" onMouseClicked="#goToAccounts">
+                            <Label text="Accounts" textFill="WHITE">
                                 <font>
                                     <Font name="System Regular" size="16.0" />
                                 </font>
@@ -38,7 +37,7 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="280.0" spacing="12" styleClass="menu-item">
                             <FontAwesomeIconView fill="WHITE" glyphName="EXCHANGE" size="24" />
-                            <Label fx:id="transactionsLabel" text="Transactions" textFill="WHITE" onMouseClicked="#goToTransactions">
+                            <Label text="Transactions" textFill="WHITE">
                                 <font>
                                     <Font name="System Regular" size="16.0" />
                                 </font>
@@ -46,7 +45,7 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="280.0" spacing="12" styleClass="menu-item">
                             <FontAwesomeIconView fill="WHITE" glyphName="MONEY" size="24" />
-                            <Label fx:id="paymentsLabel" text="Payments Transfers" textFill="WHITE" onMouseClicked="#goToPayments">
+                            <Label text="Payments Transfers" textFill="WHITE">
                                 <font>
                                     <Font name="System Regular" size="16.0" />
                                 </font>
@@ -54,7 +53,7 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="280.0" spacing="12" styleClass="menu-item">
                             <FontAwesomeIconView fill="WHITE" glyphName="LINE_CHART" size="24" />
-                            <Label fx:id="dashboardLabel" text="Dashboard" textFill="WHITE" onMouseClicked="#goToDashboard">
+                            <Label text="Dashboard" textFill="WHITE">
                                 <font>
                                     <Font name="System Regular" size="16.0" />
                                 </font>
@@ -65,7 +64,7 @@
                                 <Insets left="5.0" right="15.0" />
                             </VBox.margin>
                         </Separator>
-                        <HBox fx:id="settingsMenuItem" alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="280.0" spacing="12" styleClass="menu-item" onMouseClicked="#goToSettings">
+                        <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="280.0" spacing="12" styleClass="menu-item">
                             <FontAwesomeIconView fill="WHITE" glyphName="COG" size="24" />
                             <Label text="Settings" textFill="WHITE">
                                 <font>
@@ -75,7 +74,7 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="280.0" spacing="12" styleClass="menu-item">
                             <FontAwesomeIconView fill="WHITE" glyphName="QUESTION_CIRCLE" size="24" />
-                            <Label fx:id="helpLabel" text="Help" textFill="WHITE" onMouseClicked="#goToHelp">
+                            <Label text="Help" textFill="WHITE">
                                 <font>
                                     <Font name="System Regular" size="16.0" />
                                 </font>

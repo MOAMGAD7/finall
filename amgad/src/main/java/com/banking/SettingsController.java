@@ -3,14 +3,20 @@ package com.banking;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
@@ -146,9 +152,51 @@ public class SettingsController {
             session.clear();
 
             Parent root = FXMLLoader.load(getClass().getResource("/com/example/maged/login.fxml"));
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
+            Image backgroundImage = new Image(getClass().getResourceAsStream("/back.jpg"));
+            ImageView backgroundView = new ImageView(backgroundImage);
+
+            // الحصول على حجم الشاشة
+            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+            double screenWidth = screenBounds.getWidth();
+            double screenHeight = screenBounds.getHeight();
+
+            // إعداد الخلفية
+            backgroundView.setFitWidth(screenWidth);
+            backgroundView.setFitHeight(screenHeight);
+            backgroundView.setPreserveRatio(false);
+            backgroundView.setEffect(new GaussianBlur(20));
+
+            // عمل طبقة شفافة زرقاء
+            Region blueOverlay = new Region();
+            blueOverlay.setBackground(new Background(new BackgroundFill(
+                    Color.rgb(0, 120, 255, 0.2),
+                    CornerRadii.EMPTY,
+                    Insets.EMPTY
+            )));
+            blueOverlay.setEffect(new GaussianBlur(20));
+            blueOverlay.setPrefSize(screenWidth, screenHeight);
+
+            // وضع كل العناصر في StackPane
+            StackPane stackPane = new StackPane();
+            stackPane.getChildren().addAll(backgroundView, blueOverlay, root);
+
+            // إنشاء المشهد
+            Scene scene = new Scene(stackPane);
+
             scene.getStylesheets().clear();
+            scene.getStylesheets().add(session.isDarkMode()
+                    ? "/com/example/maged/DarkMode.css"
+                    : "/com/example/maged/LightMode.css");
+
+            // الحصول على الـ stage الحالي
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("LOG IN");
+            stage.setWidth(800);
+            stage.setHeight(600);
+            stage.centerOnScreen();
+            stage.show();
+
             String cssPath = isDarkMode ? "/com/example/maged/DarkMode.css" : "/com/example/maged/LightMode.css";
             try {
                 if (getClass().getResource(cssPath) == null) {
