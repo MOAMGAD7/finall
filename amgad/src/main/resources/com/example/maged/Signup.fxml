@@ -10,14 +10,16 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane prefHeight="650.0" prefWidth="950.0" style="-fx-background-color: #f0f2f5;" stylesheets="@Login.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.banking.SignupController">
     <center>
         <HBox alignment="CENTER" prefHeight="600.0" prefWidth="900.0" spacing="20">
+         <Region prefHeight="650.0" prefWidth="500.0" />
             <!-- Left Half: Signup Form -->
-            <VBox alignment="CENTER" maxHeight="600.0" maxWidth="566.0" minHeight="500.0" minWidth="400.0" prefHeight="600.0" prefWidth="559.0" spacing="20" style="-fx-background-color: #ffffff; -fx-background-radius: 20px; -fx-padding: 30px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 5);">
+            <VBox alignment="CENTER" maxHeight="601.0" maxWidth="566.0" minHeight="500.0" minWidth="400.0" prefHeight="601.0" prefWidth="474.0" spacing="20" style="-fx-background-color: #ffffff; -fx-background-radius: 20px; -fx-padding: 30px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 5);">
                 <children>
                     <!-- Title -->
                     <HBox prefHeight="50.0" prefWidth="300.0" spacing="10">
@@ -166,11 +168,11 @@
                         </HBox>
                         <Label fx:id="tbError" alignment="CENTER" prefHeight="18.0" prefWidth="440.0" styleClass="error-label" text="" />
                     </VBox>
+                      <Button fx:id="signupButton" onAction="#handleSignup" prefHeight="45.0" prefWidth="150.0" style="-fx-background-color: #008cff; -fx-background-radius: 15px; -fx-text-fill: white; -fx-font-size: 15px;" styleClass="action-button" text="Sign Up" />
 
                     <!-- Action Buttons -->
                     <HBox alignment="CENTER" prefHeight="40.0" prefWidth="440.0" spacing="20">
                         <children>
-                            <Button fx:id="signupButton" onAction="#handleSignup" prefHeight="45.0" prefWidth="150.0" style="-fx-background-color: #008cff; -fx-background-radius: 15px; -fx-text-fill: white; -fx-font-size: 15px;" styleClass="action-button" text="Sign Up" />
                             <Button onAction="#switchToLogin" prefHeight="45.0" prefWidth="150.0" style="-fx-background-color: #008cff; -fx-background-radius: 15px; -fx-text-fill: white; -fx-font-size: 15px;" styleClass="action-button" text="Back to Login" />
                         </children>
                     </HBox>
@@ -180,7 +182,10 @@
             </HBox.margin>
             </VBox>
             <!-- Right Half: Background Image -->
-            <VBox maxHeight="600.0" maxWidth="450.0" minHeight="500.0" minWidth="0.0" prefHeight="600.0" prefWidth="450.0" style="-fx-background-image: url('https://example.com/signup-bg.jpg'); -fx-background-size: cover; -fx-background-position: center; -fx-background-radius: 20px;" />
+            <VBox maxHeight="600.0" maxWidth="500.0" minHeight="500.0" minWidth="0.0" prefHeight="600.0" prefWidth="500.0" style="-fx-background-image: url('https://example.com/signup-bg.jpg'); -fx-background-size: cover; -fx-background-position: center; -fx-background-radius: 20px;">
+            <children>
+               <Region prefHeight="200.0" prefWidth="200.0" />
+            </children></VBox>
         </HBox>
     </center>
 </BorderPane>
