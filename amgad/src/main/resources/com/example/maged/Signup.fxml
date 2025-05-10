@@ -1,191 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<BorderPane prefHeight="650.0" prefWidth="950.0" style="-fx-background-color: #f0f2f5;" stylesheets="@Login.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.banking.SignupController">
-    <center>
-        <HBox alignment="CENTER" prefHeight="600.0" prefWidth="900.0" spacing="20">
-         <Region prefHeight="650.0" prefWidth="500.0" />
-            <!-- Left Half: Signup Form -->
-            <VBox alignment="CENTER" maxHeight="601.0" maxWidth="566.0" minHeight="500.0" minWidth="400.0" prefHeight="601.0" prefWidth="474.0" spacing="20" style="-fx-background-color: #ffffff; -fx-background-radius: 20px; -fx-padding: 30px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 5);">
-                <children>
-                    <!-- Title -->
-                    <HBox prefHeight="50.0" prefWidth="300.0" spacing="10">
-                        <children>
-                            <Label text="Create Account" textFill="#1a73e8">
-                                <font>
-                                    <Font name="System Bold" size="28.0" />
-                                </font>
-                            </Label>
-                            <!-- Image View (Circular with Placeholder Style) -->
-                            <ImageView fx:id="imageView" fitHeight="70.0" fitWidth="98.0" pickOnBounds="true" preserveRatio="true" style="-fx-background-radius: 50; -fx-border-radius: 50; -fx-border-color: #1a73e8; -fx-border-width: 2; -fx-background-color: #e0e0e0;">
-                                <HBox.margin>
-                                    <Insets left="130.0" />
-                                </HBox.margin>
-                            </ImageView>
-                        </children>
-                    </HBox>
+<?import java.lang.String?>
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.banking.SignupController" prefHeight="600" prefWidth="600">
+    <!-- Title -->
+    <Label text="Sign Up" styleClass="title" layoutX="20" layoutY="20"/>
 
-                    <!-- Row 1: Name and Email Fields -->
-                    <VBox alignment="CENTER" spacing="5">
-                        <HBox alignment="CENTER" prefHeight="40.0" prefWidth="440.0" spacing="20">
-                            <children>
-                                <!-- Name Field with Icon -->
-                                <HBox alignment="CENTER" prefHeight="40.0" prefWidth="230.0" spacing="10">
-                                    <children>
-                                        <FontAwesomeIconView fill="#1a73e8" glyphName="USER" size="20" />
-                                        <TextField fx:id="nameField" minWidth="0.0" prefHeight="32.0" prefWidth="180.0" promptText="Full Name" style="-fx-background-radius: 10px; -fx-font-size: 13px;" styleClass="input-field" />
-                                    </children>
-                                </HBox>
-                                <!-- Email Field with Icon -->
-                                <HBox alignment="CENTER" prefHeight="40.0" prefWidth="230.0" spacing="10">
-                                    <children>
-                                        <FontAwesomeIconView fill="#1a73e8" glyphName="ENVELOPE" size="20" />
-                                        <TextField fx:id="emailField" minWidth="0.0" prefHeight="32.0" prefWidth="180.0" promptText="Email" style="-fx-background-radius: 10px; -fx-font-size: 13px;" styleClass="input-field" />
-                                    </children>
-                                </HBox>
-                            </children>
-                        </HBox>
-                        <HBox alignment="CENTER" prefHeight="18.0" prefWidth="440.0" spacing="20">
-                            <children>
-                                <Label fx:id="nameError" alignment="CENTER" prefHeight="18.0" prefWidth="230.0" styleClass="error-label" text="">
-                                    <HBox.margin>
-                                        <Insets left="5.0" />
-                                    </HBox.margin>
-                                </Label>
-                                <Label fx:id="emailError" alignment="CENTER" prefHeight="18.0" prefWidth="230.0" styleClass="error-label" text="" />
-                            </children>
-                        </HBox>
-                    </VBox>
+    <!-- Name Field -->
+    <Label text="Full Name:" layoutX="20" layoutY="60"/>
+    <TextField fx:id="nameField" layoutX="120" layoutY="60" prefWidth="200" styleClass="text-field"/>
+    <Label fx:id="nameError" layoutX="330" layoutY="60" styleClass="label" textFill="red"/>
 
-                    <!-- Row 2: Mobile and National ID Fields -->
-                    <VBox alignment="CENTER" spacing="5">
-                        <HBox alignment="CENTER" prefHeight="40.0" prefWidth="440.0" spacing="20">
-                            <children>
-                                <!-- Mobile Field with Icon -->
-                                <HBox alignment="CENTER" prefHeight="40.0" prefWidth="230.0" spacing="10">
-                                    <children>
-                                        <FontAwesomeIconView fill="#1a73e8" glyphName="PHONE" size="20" />
-                                        <TextField fx:id="mobileField" minWidth="0.0" prefHeight="32.0" prefWidth="180.0" promptText="Mobile" style="-fx-background-radius: 10px; -fx-font-size: 13px;" styleClass="input-field" />
-                                    </children>
-                                </HBox>
-                                <!-- National ID Field with Icon -->
-                                <HBox alignment="CENTER" prefHeight="40.0" prefWidth="230.0" spacing="10">
-                                    <children>
-                                        <FontAwesomeIconView fill="#1a73e8" glyphName="ID_CARD" size="20" />
-                                        <TextField fx:id="nationalIdField" minWidth="0.0" prefHeight="32.0" prefWidth="180.0" promptText="National ID" style="-fx-background-radius: 10px; -fx-font-size: 13px;" styleClass="input-field" />
-                                    </children>
-                                </HBox>
-                            </children>
-                        </HBox>
-                        <HBox alignment="CENTER" prefHeight="18.0" prefWidth="440.0" spacing="20">
-                            <children>
-                                <Label fx:id="mobileError" alignment="CENTER" prefHeight="18.0" prefWidth="230.0" styleClass="error-label" text="">
-                                    <HBox.margin>
-                                        <Insets left="5.0" />
-                                    </HBox.margin>
-                                </Label>
-                                <Label fx:id="nationalIdError" alignment="CENTER" prefHeight="18.0" prefWidth="230.0" styleClass="error-label" text="" />
-                            </children>
-                        </HBox>
-                    </VBox>
+    <!-- Email Field -->
+    <Label text="Email:" layoutX="20" layoutY="100"/>
+    <TextField fx:id="emailField" layoutX="120" layoutY="100" prefWidth="200" styleClass="text-field"/>
+    <Label fx:id="emailError" layoutX="330" layoutY="100" styleClass="label" textFill="red"/>
 
-                    <!-- Row 3: Date of Birth and Username Fields -->
-                    <VBox alignment="CENTER" spacing="5">
-                        <HBox alignment="CENTER" prefHeight="40.0" prefWidth="440.0" spacing="20">
-                            <children>
-                                <!-- Date of Birth Picker with Icon -->
-                                <HBox alignment="CENTER" prefHeight="40.0" prefWidth="230.0" spacing="10">
-                                    <children>
-                                        <FontAwesomeIconView fill="#1a73e8" glyphName="CALENDAR" size="20" />
-                                        <DatePicker fx:id="dobPicker" minWidth="0.0" prefHeight="32.0" prefWidth="180.0" style="-fx-background-radius: 10px; -fx-font-size: 13px;" styleClass="input-field" />
-                                    </children>
-                                </HBox>
-                                <!-- Username Field with Icon -->
-                                <HBox alignment="CENTER" prefHeight="40.0" prefWidth="230.0" spacing="10">
-                                    <children>
-                                        <FontAwesomeIconView fill="#1a73e8" glyphName="USER" size="20" />
-                                        <TextField fx:id="usernameField" minWidth="0.0" prefHeight="32.0" prefWidth="180.0" promptText="Username" style="-fx-background-radius: 10px; -fx-font-size: 13px;" styleClass="input-field" />
-                                    </children>
-                                </HBox>
-                            </children>
-                        </HBox>
-                        <HBox alignment="CENTER" prefHeight="24.0" prefWidth="440.0" spacing="20">
-                            <children>
-                                <Label fx:id="dobError" alignment="CENTER" prefHeight="18.0" prefWidth="230.0" styleClass="error-label" text="" />
-                                <Label fx:id="usernameError" alignment="CENTER" prefHeight="23.0" prefWidth="230.0" styleClass="error-label" text="" />
-                            </children>
-                        </HBox>
-                    </VBox>
+    <!-- Mobile Field -->
+    <Label text="Mobile:" layoutX="20" layoutY="140"/>
+    <TextField fx:id="mobileField" layoutX="120" layoutY="140" prefWidth="200" styleClass="text-field"/>
+    <Label fx:id="mobileError" layoutX="330" layoutY="140" styleClass="label" textFill="red"/>
 
-                    <!-- Row 4: Password and Image Path Fields -->
-                    <VBox alignment="CENTER" spacing="5">
-                        <HBox alignment="CENTER" prefHeight="40.0" prefWidth="440.0" spacing="20">
-                            <children>
-                                <!-- Password Field with Icon -->
-                                <HBox alignment="CENTER" prefHeight="40.0" prefWidth="230.0" spacing="10">
-                                    <children>
-                                        <FontAwesomeIconView fill="#1a73e8" glyphName="LOCK" size="20" />
-                                        <PasswordField fx:id="passwordField" minWidth="0.0" prefHeight="32.0" prefWidth="180.0" promptText="Password" style="-fx-background-radius: 10px; -fx-font-size: 13px;" styleClass="input-field" />
-                                    </children>
-                                </HBox>
-                                <!-- Image Path Field with Icon -->
-                                <HBox alignment="CENTER" prefHeight="40.0" prefWidth="230.0" spacing="10">
-                                    <children>
-                                        <FontAwesomeIconView fill="#1a73e8" glyphName="IMAGE" size="20" />
-                                        <TextField fx:id="imagePathField" minWidth="0.0" prefHeight="32.0" prefWidth="180.0" promptText="Profile Image Path" style="-fx-background-radius: 10px; -fx-font-size: 13px;" styleClass="input-field" />
-                                    </children>
-                                </HBox>
-                            </children>
-                        </HBox>
-                        <HBox alignment="CENTER" prefHeight="18.0" prefWidth="440.0" spacing="20">
-                            <children>
-                                <Label fx:id="passwordError" alignment="CENTER" prefHeight="18.0" prefWidth="230.0" styleClass="error-label" text="" />
-                                <Label fx:id="imagePathError" alignment="CENTER" prefHeight="18.0" prefWidth="230.0" styleClass="error-label" text="" />
-                            </children>
-                        </HBox>
-                    </VBox>
+    <!-- National ID Field -->
+    <Label text="National ID:" layoutX="20" layoutY="180"/>
+    <TextField fx:id="nationalIdField" layoutX="120" layoutY="180" prefWidth="200" styleClass="text-field"/>
+    <Label fx:id="nationalIdError" layoutX="330" layoutY="180" styleClass="label" textFill="red"/>
 
-                    <!-- Balance Field -->
-                    <VBox alignment="CENTER" spacing="5">
-                        <HBox alignment="CENTER" prefHeight="40.0" prefWidth="440.0" spacing="10">
-                            <children>
-                                <FontAwesomeIconView fill="#1a73e8" glyphName="MONEY" size="20" />
-                                <TextField fx:id="tb" prefHeight="32.0" prefWidth="380.0" promptText="Initial Balance" style="-fx-background-radius: 10px; -fx-font-size: 13px;" styleClass="input-field" />
-                            </children>
-                        </HBox>
-                        <Label fx:id="tbError" alignment="CENTER" prefHeight="18.0" prefWidth="440.0" styleClass="error-label" text="" />
-                    </VBox>
-                      <Button fx:id="signupButton" onAction="#handleSignup" prefHeight="45.0" prefWidth="150.0" style="-fx-background-color: #008cff; -fx-background-radius: 15px; -fx-text-fill: white; -fx-font-size: 15px;" styleClass="action-button" text="Sign Up" />
+    <!-- Date of Birth Picker -->
+    <Label text="Date of Birth:" layoutX="20" layoutY="220"/>
+    <DatePicker fx:id="dobPicker" layoutX="120" layoutY="220" prefWidth="200"/>
 
-                    <!-- Action Buttons -->
-                    <HBox alignment="CENTER" prefHeight="40.0" prefWidth="440.0" spacing="20">
-                        <children>
-                            <Button onAction="#switchToLogin" prefHeight="45.0" prefWidth="150.0" style="-fx-background-color: #008cff; -fx-background-radius: 15px; -fx-text-fill: white; -fx-font-size: 15px;" styleClass="action-button" text="Back to Login" />
-                        </children>
-                    </HBox>
-                </children>
-            <HBox.margin>
-               <Insets left="15.0" />
-            </HBox.margin>
-            </VBox>
-            <!-- Right Half: Background Image -->
-            <VBox maxHeight="600.0" maxWidth="500.0" minHeight="500.0" minWidth="0.0" prefHeight="600.0" prefWidth="500.0" style="-fx-background-image: url('https://example.com/signup-bg.jpg'); -fx-background-size: cover; -fx-background-position: center; -fx-background-radius: 20px;">
-            <children>
-               <Region prefHeight="200.0" prefWidth="200.0" />
-            </children></VBox>
-        </HBox>
-    </center>
-</BorderPane>
+    <!-- Username Field -->
+    <Label text="Username:" layoutX="20" layoutY="260"/>
+    <TextField fx:id="usernameField" layoutX="120" layoutY="260" prefWidth="200" styleClass="text-field"/>
+    <Label fx:id="usernameError" layoutX="330" layoutY="260" styleClass="label" textFill="red"/>
+
+    <!-- Password Field -->
+    <Label text="Password:" layoutX="20" layoutY="300"/>
+    <PasswordField fx:id="passwordField" layoutX="120" layoutY="300" prefWidth="200" styleClass="text-field"/>
+    <Label fx:id="passwordError" layoutX="330" layoutY="300" styleClass="label" textFill="red"/>
+
+    <!-- Image Path Field -->
+    <Label text="Profile Image:" layoutX="20" layoutY="340"/>
+    <TextField fx:id="imagePathField" layoutX="120" layoutY="340" prefWidth="200" styleClass="text-field"/>
+    <ImageView fx:id="imageView" layoutX="330" layoutY="340" fitHeight="50" fitWidth="50"/>
+
+    <!-- Balance Field -->
+    <Label text="Initial Balance:" layoutX="20" layoutY="400"/>
+    <TextField fx:id="tb" layoutX="120" layoutY="400" prefWidth="200" styleClass="text-field"/>
+    <Label fx:id="tbError" layoutX="330" layoutY="400" styleClass="label" textFill="red"/>
+
+    <!-- Action Buttons -->
+    <Button fx:id="signupButton" text="Sign Up" layoutX="120" layoutY="460" onAction="#handleSignup" styleClass="button"/>
+    <Button text="Back to Login" layoutX="250" layoutY="460" onAction="#switchToLogin" styleClass="button"/>
+</AnchorPane>
