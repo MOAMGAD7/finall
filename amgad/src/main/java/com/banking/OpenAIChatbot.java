@@ -1,10 +1,7 @@
 package com.banking;
-
 import okhttp3.*;
 import org.json.JSONObject;
-
 import java.io.IOException;
-
 public class OpenAIChatbot {
     private static final String API_KEY = "amgad"; // استبدلها بـ API Key بتاعك
     private static final String API_URL = "https://api.openai.com/v1/chat/completions";

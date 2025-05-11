@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class SettingsController {
+
     @FXML private TextField fullNameField;
     @FXML private TextField emailField;
     @FXML private TextField phoneField;
@@ -31,7 +32,7 @@ public class SettingsController {
     @FXML private Button editButton;
     @FXML private Button saveButton;
     @FXML private Button logoutButton;
-    @FXML private Button toggleThemeButton;
+    @FXML private Button toggleThemeButton; // الزر دا هيفضل موجود لكن مش هيستخدم
 
     private String currentUsername;
     private String newImagePath;
@@ -44,34 +45,8 @@ public class SettingsController {
             return;
         }
 
-        // تحميل التنسيق بناءً على UserSession
-        applyTheme();
-
-        // تحديث نص زر التبديل
-        updateToggleThemeButtonText();
-
         // تحميل بيانات المستخدم
         loadUserData();
-    }
-
-    private void applyTheme() {
-        boolean isDarkMode = UserSession.getInstance().isDarkMode();
-        String cssPath = isDarkMode ? "/com/example/maged/DarkMode.css" : "/com/example/maged/LightMode.css";
-        Scene scene = toggleThemeButton != null ? toggleThemeButton.getScene() : null;
-        if (scene != null) {
-            scene.getStylesheets().clear();
-            try {
-                if (getClass().getResource(cssPath) == null) {
-                    System.err.println("CSS file not found: " + cssPath);
-                } else {
-                    scene.getStylesheets().add(getClass().getResource(cssPath).toExternalForm());
-                    scene.getRoot().applyCss();
-                    System.out.println("Applied CSS: " + cssPath);
-                }
-            } catch (Exception e) {
-                System.err.println("Error loading CSS " + cssPath + ": " + e.getMessage());
-            }
-        }
     }
 
     private void loadUserData() {
@@ -98,11 +73,9 @@ public class SettingsController {
         phoneField.setEditable(true);
         nationalIdField.setEditable(true);
         balanceField.setEditable(false);
-
         saveButton.setDisable(false);
         editButton.setDisable(true);
     }
-
     @FXML
     private void saveChanges() {
         boolean updated = database_BankSystem.updateUserDetails(
@@ -148,7 +121,6 @@ public class SettingsController {
     private void handleLogout(ActionEvent event) {
         try {
             UserSession session = UserSession.getInstance();
-            boolean isDarkMode = session.isDarkMode();
             session.clear();
 
             Parent root = FXMLLoader.load(getClass().getResource("/com/example/maged/login.fxml"));
@@ -183,67 +155,18 @@ public class SettingsController {
             // إنشاء المشهد
             Scene scene = new Scene(stackPane);
 
-            scene.getStylesheets().clear();
-            scene.getStylesheets().add(session.isDarkMode()
-                    ? "/com/example/maged/DarkMode.css"
-                    : "/com/example/maged/LightMode.css");
-
             // الحصول على الـ stage الحالي
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(scene);
-            stage.setTitle("LOG IN");
+            stage.setTitle("Bank System - Login");
             stage.setWidth(800);
             stage.setHeight(600);
             stage.centerOnScreen();
-            stage.show();
-
-            String cssPath = isDarkMode ? "/com/example/maged/DarkMode.css" : "/com/example/maged/LightMode.css";
-            try {
-                if (getClass().getResource(cssPath) == null) {
-                    System.err.println("CSS file not found: " + cssPath);
-                } else {
-                    scene.getStylesheets().add(getClass().getResource(cssPath).toExternalForm());
-                    System.out.println("Applied CSS on login: " + cssPath);
-                }
-            } catch (Exception e) {
-                System.err.println("Error loading CSS on login: " + cssPath + ": " + e.getMessage());
-            }
-            stage.setScene(scene);
-            stage.setTitle("Bank System - Login");
             stage.show();
         } catch (IOException e) {
             System.out.println("Error loading Login page: " + e.getMessage());
             e.printStackTrace();
         }
-    }
-
-    @FXML
-    private void toggleTheme(ActionEvent event) {
-        UserSession session = UserSession.getInstance();
-        boolean isDarkMode = !session.isDarkMode();
-        session.setDarkMode(isDarkMode);
-
-        Scene scene = toggleThemeButton.getScene();
-        scene.getStylesheets().clear();
-        String cssPath = isDarkMode ? "/com/example/maged/DarkMode.css" : "/com/example/maged/LightMode.css";
-        try {
-            if (getClass().getResource(cssPath) == null) {
-                System.err.println("CSS file not found: " + cssPath);
-            } else {
-                scene.getStylesheets().add(getClass().getResource(cssPath).toExternalForm());
-                scene.getRoot().applyCss();
-                System.out.println("Loaded CSS: " + cssPath);
-            }
-        } catch (Exception e) {
-            System.err.println("Error loading CSS " + cssPath + ": " + e.getMessage());
-        }
-
-        updateToggleThemeButtonText();
-    }
-
-    private void updateToggleThemeButtonText() {
-        boolean isDarkMode = UserSession.getInstance().isDarkMode();
-        toggleThemeButton.setText(isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode");
     }
 
     private String getCurrentImagePath() {

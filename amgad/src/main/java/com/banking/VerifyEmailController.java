@@ -1,5 +1,4 @@
 package com.banking;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -33,7 +32,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-
 import jakarta.mail.*;
 import jakarta.mail.internet.*;
 import java.io.IOException;
@@ -45,7 +43,11 @@ public class VerifyEmailController {
     @FXML private Label codeError;
 
     // Email settings (SMTP)
+    //smtp.gmail.com" هو عنوان السيرفر الذي يتعامل مع إرسال الرسائل للبريد الإلكتروني التابع لجوجل.
     private static final String SMTP_HOST = "smtp.gmail.com";
+    //587: اتصال مشفر باستخدام STARTTLS ← الموصى به من Google.
+    //
+    //في هذه الحالة نستخدم 587 مع TLS encryption الذي يبدأ بعد الاتصال.
     private static final String SMTP_PORT = "587";
     private static final String SENDER_EMAIL = "mohamedamgad7777@gmail.com"; // Replace with your Gmail address
     private static final String SENDER_PASSWORD = "xnpvkxlplwtqscbg"; // Replace with your App Password
@@ -112,22 +114,22 @@ public class VerifyEmailController {
             // تحميل الصفحة المناسبة
             Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            
+
             // تحميل خلفية الصورة
             Image backgroundImage = new Image(getClass().getResourceAsStream("/back.jpg"));
             ImageView backgroundView = new ImageView(backgroundImage);
-            
+
             // الحصول على أبعاد الشاشة
             Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
             double screenWidth = screenBounds.getWidth();
             double screenHeight = screenBounds.getHeight();
-            
+
             // ضبط الخلفية لتناسب الشاشة
             backgroundView.setFitWidth(screenWidth);
             backgroundView.setFitHeight(screenHeight);
             backgroundView.setPreserveRatio(false);
             backgroundView.setEffect(new GaussianBlur(20));
-            
+
             // إنشاء طبقة زرقاء شفافة
             Region blueOverlay = new Region();
             blueOverlay.setBackground(new Background(new BackgroundFill(
@@ -137,16 +139,16 @@ public class VerifyEmailController {
             )));
             blueOverlay.setEffect(new GaussianBlur(20));
             blueOverlay.setPrefSize(screenWidth, screenHeight);
-            
+
             // تجميع الخلفية والطبقة الشفافة وواجهة المستخدم
             StackPane stackPane = new StackPane();
             stackPane.getChildren().addAll(backgroundView, blueOverlay, root);
-            
+
             // إنشاء المشهد
             Scene scene = new Scene(stackPane);
             scene.getStylesheets().clear();
-            scene.getStylesheets().add(session.isDarkMode() ? "/com/example/maged/DarkMode.css" : "/com/example/maged/LightMode.css");
-            
+
+
             stage.setScene(scene);
             stage.setTitle(title);
             stage.show();
@@ -200,7 +202,7 @@ public class VerifyEmailController {
         Scene scene = new Scene(stackPane);
         UserSession session = UserSession.getInstance();
         scene.getStylesheets().clear();
-        scene.getStylesheets().add(session.isDarkMode() ? "/com/example/maged/DarkMode.css" : "/com/example/maged/LightMode.css");
+
         
         stage.setScene(scene);
         stage.setTitle("Login");

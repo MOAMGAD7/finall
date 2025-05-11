@@ -30,10 +30,6 @@ public class ChangePasswordController {
     @FXML private TextField newPasswordField;
     @FXML private TextField confirmPasswordField;
     @FXML private Label errorLabel;
-    
-    // متغيرات للتحكم في سحب النافذة
-    private double xOffset = 0;
-    private double yOffset = 0;
 
     @FXML
     protected void handleChangePassword(ActionEvent event) throws IOException {
@@ -94,7 +90,7 @@ public class ChangePasswordController {
             // إنشاء المشهد
             Scene scene = new Scene(stackPane);
             scene.getStylesheets().clear();
-            scene.getStylesheets().add(session.isDarkMode() ? "/com/example/maged/DarkMode.css" : "/com/example/maged/LightMode.css");
+
             
             stage.setScene(scene);
             stage.setTitle("Login");
@@ -144,44 +140,11 @@ public class ChangePasswordController {
         // Create the scene
         Scene scene = new Scene(stackPane);
         scene.getStylesheets().clear();
-        scene.getStylesheets().add(session.isDarkMode() ? "/com/example/maged/DarkMode.css" : "/com/example/maged/LightMode.css");
+
         
         stage.setScene(scene);
         stage.setTitle("Login");
         stage.show();
     }
-    
-    // طرق التحكم في النافذة
-    
-    @FXML
-    protected void handleMousePressed(MouseEvent event) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        xOffset = stage.getX() - event.getScreenX();
-        yOffset = stage.getY() - event.getScreenY();
-    }
-    
-    @FXML
-    protected void handleMouseDragged(MouseEvent event) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setX(event.getScreenX() + xOffset);
-        stage.setY(event.getScreenY() + yOffset);
-    }
-    
-    @FXML
-    protected void handleClose(ActionEvent event) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.close();
-    }
-    
-    @FXML
-    protected void handleMinimize(ActionEvent event) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setIconified(true);
-    }
-    
-    @FXML
-    protected void handleMaximize(ActionEvent event) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setMaximized(!stage.isMaximized());
-    }
+
 }

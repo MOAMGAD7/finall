@@ -205,14 +205,7 @@
                 </HBox>
 
                 <!-- Toggle Theme Button -->
-                <Button fx:id="toggleThemeButton" onAction="#toggleTheme" prefHeight="30.0" prefWidth="142.0" style="-fx-background-color: linear-gradient(to bottom, #00a2ff, #0066cc); -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 22px; -fx-effect: dropshadow(gaussian, rgba(0,140,255,0.8), 12, 0, 0, 0);" text="Toggle Theme">
-                    <graphic>
-                        <FontAwesomeIconView fill="WHITE" glyphName="SUN_O" size="18" />
-                    </graphic>
-                    <VBox.margin>
-                        <Insets top="5.0" />
-                    </VBox.margin>
-                </Button>
+
             <HBox alignment="CENTER" layoutX="36.0" layoutY="635.0" spacing="10" style="-fx-background-color: transparent; -fx-background-radius: 12px; -fx-padding: 8 12;">
                <children>
                   <Button fx:id="logoutButton1" onAction="#handleLogout" prefHeight="30.0" prefWidth="121.0" style="-fx-background-color: linear-gradient(to bottom, #00a2ff, #0066cc); -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 22px; -fx-effect: dropshadow(gaussian, rgba(0,140,255,0.8), 12, 0, 0, 0);" text="Logout">

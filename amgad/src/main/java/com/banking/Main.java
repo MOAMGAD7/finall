@@ -55,9 +55,7 @@ public class Main extends Application {
 
         // Create the scene
         Scene scene = new Scene(stackPane);
-        scene.getStylesheets().add(UserSession.getInstance().isDarkMode()
-                ? "/com/example/maged/DarkMode.css"
-                : "/com/example/maged/LightMode.css");
+
 
         // Set up the primary stage
         primaryStage.setScene(scene);

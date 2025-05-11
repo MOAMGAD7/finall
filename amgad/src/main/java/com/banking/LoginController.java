@@ -124,9 +124,7 @@ public class LoginController {
             Scene scene = new Scene(stackPane);
 
             scene.getStylesheets().clear();
-            scene.getStylesheets().add(session.isDarkMode()
-                    ? "/com/example/maged/DarkMode.css"
-                    : "/com/example/maged/LightMode.css");
+
 
             // الحصول على الـ stage الحالي
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -146,27 +144,38 @@ public class LoginController {
             // التحقق إذا وصلنا للحد الأقصى للمحاولات
             if (failedAttempts >= MAX_ATTEMPTS) {
                 isLocked = true;
-                loginButton.setDisable(true); // تعطيل زرار تسجيل الدخول
-                forgetPasswordLink.setVisible(true); // إظهار رابط "Forget Password"
+                loginButton.setDisable(true);
+                forgetPasswordLink.setVisible(true);
 
-                // إعداد عداد 30 ثانية
-                lockTimeline = new Timeline(new KeyFrame(Duration.seconds(30), e -> {
-                    isLocked = false;
-                    loginButton.setDisable(false);
-                    failedAttempts = 0;
-                    errorLabel.setText("You can try again now.");
-                    forgetPasswordLink.setVisible(false);
-                }));
-                lockTimeline.setCycleCount(1);
+                // عدد الثواني
+                final int[] secondsLeft = {30};
+
+                // تحديث الرسالة كل ثانية
+                lockTimeline = new Timeline(
+                        new KeyFrame(Duration.seconds(1), e -> {
+                            secondsLeft[0]--;
+                            if (secondsLeft[0] > 0) {
+                                errorLabel.setText("Too many failed attempts. Try again in " + secondsLeft[0] + " seconds.");
+                            } else {
+                                isLocked = false;
+                                loginButton.setDisable(false);
+                                failedAttempts = 0;
+                                errorLabel.setText("You can try again now.");
+                                lockTimeline.stop(); // إيقاف المؤقت
+                            }
+                        })
+                );
+
+                lockTimeline.setCycleCount(30); // 30 مرة (ثانية)
                 lockTimeline.play();
 
-                errorLabel.setText("Too many failed attempts. Wait 30 seconds to try again.");
+                // أول رسالة تظهر مباشرة
+                errorLabel.setText("Too many failed attempts. Try again in 30 seconds.");
             }
         }
     }
 
-
-    @FXML
+            @FXML
     protected void handleForgetPassword(ActionEvent event) throws IOException {
         // تحميل صفحة Forget Password
         Parent root = FXMLLoader.load(getClass().getResource("/com/example/maged/ForgetPassword.fxml"));
@@ -204,9 +213,6 @@ public class LoginController {
         Scene scene = new Scene(stackPane);
         UserSession session = UserSession.getInstance();
         scene.getStylesheets().clear();
-        scene.getStylesheets().add(session.isDarkMode()
-                ? "/com/example/maged/DarkMode.css"
-                : "/com/example/maged/LightMode.css");
 
         // الحصول على الـ stage الحالي
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -255,9 +261,6 @@ public class LoginController {
         Scene scene = new Scene(stackPane);
 
         scene.getStylesheets().clear();
-        scene.getStylesheets().add(session.isDarkMode()
-                ? "/com/example/maged/DarkMode.css"
-                : "/com/example/maged/LightMode.css");
 
         // الحصول على الـ stage الحالي
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

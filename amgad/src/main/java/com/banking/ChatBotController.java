@@ -1,5 +1,4 @@
 package com.banking;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,12 +10,9 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.util.List;
-
 public class ChatBotController {
-
     @FXML private TextField questionField;
     @FXML private ScrollPane chatScrollPane;
     @FXML private VBox chatHistory;
@@ -156,7 +152,7 @@ public class ChatBotController {
         Scene scene = new Scene(root);
         UserSession session = UserSession.getInstance();
         scene.getStylesheets().clear();
-        scene.getStylesheets().add(session.isDarkMode() ? "/com/example/maged/DarkMode.css" : "/com/example/maged/LightMode.css");
+
         stage.setScene(scene);
         stage.setTitle("Dashboard");
         stage.show();

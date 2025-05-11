@@ -1,5 +1,4 @@
 package com.banking;
-
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,11 +20,8 @@ import java.io.IOException;
 import jakarta.mail.*;
 import jakarta.mail.internet.*;
 import java.util.Properties;
-
 import static java.lang.Double.parseDouble;
-
 public class SignupController {
-
     @FXML private TextField nameField;
     @FXML private TextField emailField;
     @FXML private TextField mobileField;
@@ -56,7 +52,6 @@ public class SignupController {
             updateImageView(newVal);
         });
         dobPicker.valueProperty().addListener((obs, oldVal, newVal) -> validateForm());
-
         validateForm();
     }
 
@@ -202,9 +197,6 @@ public class SignupController {
                 Scene scene = new Scene(stackPane);
 
                 scene.getStylesheets().clear();
-                scene.getStylesheets().add(session.isDarkMode()
-                        ? "/com/example/maged/DarkMode.css"
-                        : "/com/example/maged/LightMode.css");
 
                 // الحصول على الـ stage الحالي
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -340,9 +332,6 @@ public class SignupController {
         Scene scene = new Scene(stackPane);
 
         scene.getStylesheets().clear();
-        scene.getStylesheets().add(session.isDarkMode()
-                ? "/com/example/maged/DarkMode.css"
-                : "/com/example/maged/LightMode.css");
 
         // الحصول على الـ stage الحالي
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

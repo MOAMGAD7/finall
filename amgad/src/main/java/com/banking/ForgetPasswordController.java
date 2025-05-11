@@ -21,12 +21,10 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-
 import jakarta.mail.*;
 import jakarta.mail.internet.*;
 import java.io.IOException;
 import java.util.Properties;
-
 public class ForgetPasswordController {
 
     @FXML private TextField emailField;
@@ -134,7 +132,7 @@ public class ForgetPasswordController {
         // Create the scene
         Scene scene = new Scene(stackPane);
         scene.getStylesheets().clear();
-        scene.getStylesheets().add(session.isDarkMode() ? "/com/example/maged/DarkMode.css" : "/com/example/maged/LightMode.css");
+
         
         stage.setScene(scene);
         stage.setTitle("Verify Email");
@@ -180,7 +178,7 @@ public class ForgetPasswordController {
         Scene scene = new Scene(stackPane);
         UserSession session = UserSession.getInstance();
         scene.getStylesheets().clear();
-        scene.getStylesheets().add(session.isDarkMode() ? "/com/example/maged/DarkMode.css" : "/com/example/maged/LightMode.css");
+
         
         stage.setScene(scene);
         stage.setTitle("Login");
