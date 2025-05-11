@@ -54,7 +54,7 @@
                         </Separator>
                         <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="213.0" spacing="12" styleClass="menu-item">
                             <FontAwesomeIconView fx:id="chartIcon" fill="WHITE" glyphName="LINE_CHART" size="24" />
-                            <Label fx:id="chartLabel" text="Dashboard" textFill="WHITE">
+                            <Label fx:id="chartLabel" onMouseClicked="#ToDashBoard" text="Dashboard" textFill="WHITE">
                                 <font>
                                     <Font name="System Regular" size="16.0" />
                                 </font>
@@ -75,7 +75,7 @@
                         </Separator>
                         <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="213.0" spacing="12" styleClass="menu-item">
                             <FontAwesomeIconView fx:id="commentIcon" fill="WHITE" glyphName="COMMENT" size="24" />
-                            <Label fx:id="commentLabel" text="Chat" textFill="WHITE">
+                            <Label fx:id="commentLabel" onMouseClicked="#ToChat" text="Chat" textFill="WHITE">
                                 <font>
                                     <Font name="System Bold" size="16.0" />
                                 </font>
