@@ -29,6 +29,11 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-media</artifactId>
+            <version>21.0.7</version> <!-- استخدم النسخة اللي مناسبة ليك -->
+        </dependency>
         <!-- Spring Boot Dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

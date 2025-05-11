@@ -1,14 +1,29 @@
 package com.banking;
 
 import javafx.animation.*;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.effect.Glow;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
 import javafx.util.Duration;
+
+import java.io.IOException;
 
 public class HomeController {
 
@@ -43,13 +58,14 @@ public class HomeController {
                 System.err.println("Audio file not found!");
                 return;
             }
-            Media media = new Media(audioPath);
+            Media media = new Media(audioPath); // السطر 46
             mediaPlayer = new MediaPlayer(media);
             mediaPlayer.setAudioSpectrumInterval(0.1);
             mediaPlayer.setAudioSpectrumNumBands(10);
             mediaPlayer.setOnReady(() -> {
                 double durationSeconds = media.getDuration().toSeconds();
                 System.out.println("Audio duration: " + durationSeconds + " seconds (" + (durationSeconds / 60) + " minutes)");
+                mediaPlayer.play(); // نقلت تشغيل الصوت هنا عشان يشتغل بعد ما يكون جاهز
             });
             mediaPlayer.setOnPlaying(() -> System.out.println("Audio started playing"));
             mediaPlayer.setOnEndOfMedia(() -> System.out.println("Audio finished playing after " + mediaPlayer.getCurrentTime().toSeconds() + " seconds"));
@@ -66,7 +82,6 @@ public class HomeController {
                 }
             });
             mediaPlayer.setCycleCount(1);
-            mediaPlayer.play();
         } catch (Exception e) {
             System.err.println("Error loading audio: " + e.getMessage());
             e.printStackTrace();
@@ -212,6 +227,99 @@ public class HomeController {
             });
         }
     }
+
+    @FXML
+    protected void ToLogin(ActionEvent event) throws IOException {
+        UserSession session = UserSession.getInstance();
+        Parent root = FXMLLoader.load(getClass().getResource("/com/example/maged/login.fxml"));
+        Image backgroundImage = new Image(getClass().getResourceAsStream("/back.jpg"));
+        ImageView backgroundView = new ImageView(backgroundImage);
+
+        // الحصول على حجم الشاشة
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        double screenWidth = screenBounds.getWidth();
+        double screenHeight = screenBounds.getHeight();
+
+        // إعداد الخلفية
+        backgroundView.setFitWidth(screenWidth);
+        backgroundView.setFitHeight(screenHeight);
+        backgroundView.setPreserveRatio(false);
+        backgroundView.setEffect(new GaussianBlur(20));
+
+        // عمل طبقة شفافة زرقاء
+        Region blueOverlay = new Region();
+        blueOverlay.setBackground(new Background(new BackgroundFill(
+                Color.rgb(0, 120, 255, 0.2),
+                CornerRadii.EMPTY,
+                Insets.EMPTY
+        )));
+        blueOverlay.setEffect(new GaussianBlur(20));
+        blueOverlay.setPrefSize(screenWidth, screenHeight);
+
+        // وضع كل العناصر في StackPane
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().addAll(backgroundView, blueOverlay, root);
+
+        // إنشاء المشهد
+        Scene scene = new Scene(stackPane);
+
+        scene.getStylesheets().clear();
+
+        // الحصول على الـ stage الحالي
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.setTitle("LOG IN");
+        stage.setWidth(800);
+        stage.setHeight(600);
+        stage.centerOnScreen();
+        stage.show();
+    }
+    @FXML
+    protected void ToSignUp(MouseEvent event) throws IOException {
+        UserSession session = UserSession.getInstance();
+        Parent root = FXMLLoader.load(getClass().getResource("/com/example/maged/signup.fxml"));
+        Image backgroundImage = new Image(getClass().getResourceAsStream("/back.jpg"));
+        ImageView backgroundView = new ImageView(backgroundImage);
+
+        // الحصول على حجم الشاشة
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        double screenWidth = screenBounds.getWidth();
+        double screenHeight = screenBounds.getHeight();
+
+        // إعداد الخلفية
+        backgroundView.setFitWidth(screenWidth);
+        backgroundView.setFitHeight(screenHeight);
+        backgroundView.setPreserveRatio(false);
+        backgroundView.setEffect(new GaussianBlur(20));
+
+        // طبقة شفافة زرقاء
+        Region blueOverlay = new Region();
+        blueOverlay.setBackground(new Background(new BackgroundFill(
+                Color.rgb(0, 120, 255, 0.2),
+                CornerRadii.EMPTY,
+                Insets.EMPTY
+        )));
+        blueOverlay.setEffect(new GaussianBlur(20));
+        blueOverlay.setPrefSize(screenWidth, screenHeight);
+
+        // تجميع في StackPane
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().addAll(backgroundView, blueOverlay, root);
+
+        // إنشاء المشهد
+        Scene scene = new Scene(stackPane);
+        scene.getStylesheets().clear();
+
+        // الحصول على الـ stage الحالي
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.setTitle("SIGN UP");
+        stage.setWidth(800);
+        stage.setHeight(600);
+        stage.centerOnScreen();
+        stage.show();
+    }
+
 
     public void stop() {
         if (mediaPlayer != null) {

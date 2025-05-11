@@ -1,44 +1,60 @@
 package com.banking;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
+import javafx.animation.*;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.GaussianBlur;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
-import javafx.stage.FileChooser;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.scene.Scene;
+import javafx.scene.text.Font;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.effect.BoxBlur;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
+import javafx.geometry.Insets;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.chart.XYChart;
+import javafx.scene.chart.BarChart;
 
-import java.io.File;
-import java.io.IOException;
+public class Account {
 
-public class SettingsController {
+    @FXML
+    private Button addCardButton;
 
+    @FXML
+    private HBox cardContainer;
 
-    // Mahmoud
+    @FXML
+    private BarChart<String, Number> barChart;
+
+    @FXML
+    private VBox cardInputBox;
+
+    private int cardCount = 0;
+    private final int maxCards = 4;
+
+    @FXML
+    private VBox transactionList;
+
+    //------------------------------------------------------------------------------------------------------------------------------------------//
+    //sidebar
     @FXML
     private FontAwesomeIconView homeIcon;
+
     @FXML
     private Label homeLabel;
 
@@ -90,28 +106,112 @@ public class SettingsController {
 
     @FXML
     private ImageView homeGif;
+    //-------------------------------------------------------------------------------------------------------------//
 
-// Mahmoud
-
-
-    @FXML private TextField fullNameField;
-    @FXML private TextField emailField;
-    @FXML private TextField phoneField;
-    @FXML private TextField nationalIdField;
-    @FXML private TextField balanceField;
-    @FXML private ImageView profileImage;
-    @FXML private Button editButton;
-    @FXML private Button saveButton;
-    @FXML private Button logoutButton;
-    @FXML private Button toggleThemeButton; // الزر دا هيفضل موجود لكن مش هيستخدم
-
-    private String currentUsername;
-    private String newImagePath;
-
+    @FXML
     public void initialize() {
 
-        //Mahmoud
+        Object[][] transactions = {
+                {"Ahmed", "Received", "+$120", "/s1.png", Color.LIMEGREEN},
+                {"Laila", "Shopping", "-$60", "/s2.png", Color.RED},
+                {"Tarek", "Transfer", "-$300", "/s3.png", Color.ORANGE},
+                {"Mona", "Refund", "+$75", "/s4.png", Color.LIMEGREEN},
+                {"Ahmed", "Received", "+$120", "/s1.png", Color.LIMEGREEN},
+                {"Laila", "Shopping", "-$60", "/s2.png", Color.RED},
+                {"Tarek", "Transfer", "-$300", "/s3.png", Color.ORANGE},
+                {"Mona", "Refund", "+$75", "/s4.png", Color.LIMEGREEN},
+                {"Ahmed", "Received", "+$120", "/s1.png", Color.LIMEGREEN},
+                {"Laila", "Shopping", "-$60", "/s2.png", Color.RED},
+                {"Tarek", "Transfer", "-$300", "/s3.png", Color.ORANGE},
+                {"Mona", "Refund", "+$75", "/s4.png", Color.LIMEGREEN},
+                {"Ahmed", "Received", "+$120", "/s1.png", Color.LIMEGREEN},
+                {"Laila", "Shopping", "-$60", "/s2.png", Color.RED},
+                {"Tarek", "Transfer", "-$300", "/s3.png", Color.ORANGE},
+                {"Mona", "Refund", "+$75", "/s4.png", Color.LIMEGREEN}
+        };
 
+        for (int i = 0; i < transactions.length; i += 2) {
+            HBox row = new HBox(20); // مسافة بين الكروت
+            row.setAlignment(Pos.CENTER);
+            row.setPrefWidth(Region.USE_COMPUTED_SIZE);
+
+            HBox card1 = createTransactionCard(transactions[i]);
+            HBox.setHgrow(card1, Priority.ALWAYS);
+            card1.setMaxWidth(Double.MAX_VALUE);
+
+            row.getChildren().add(card1);
+
+            if (i + 1 < transactions.length) {
+                HBox card2 = createTransactionCard(transactions[i + 1]);
+                HBox.setHgrow(card2, Priority.ALWAYS);
+                card2.setMaxWidth(Double.MAX_VALUE);
+                row.getChildren().add(card2);
+            } else {
+                Region filler = new Region(); // لو مش فيه عنصر ثاني
+                HBox.setHgrow(filler, Priority.ALWAYS);
+                row.getChildren().add(filler);
+            }
+
+            transactionList.getChildren().add(row);
+
+        }
+
+
+        // اجعل خلفية الرسم البياني الشفافة
+        barChart.setLegendVisible(false);
+        barChart.lookup(".chart-plot-background").setStyle("-fx-background-color: transparent;");
+// تغيير لون عنوان الرسم
+        Node chartTitle = barChart.lookup(".chart-title");
+        if (chartTitle != null) {
+            chartTitle.setStyle("-fx-text-fill: white;");
+        }
+
+        cardInputBox.setVisible(false);
+        cardInputBox.setManaged(false);
+
+        // Add default card
+        Image img = new Image(getClass().getResourceAsStream("/s2.png"));
+        ImageView newCard = new ImageView(img);
+        newCard.setFitWidth(250);
+        newCard.setFitHeight(170);
+        newCard.setOnMouseClicked(event -> showFloatingCardWindow(img, "Default Name", "0000 0000 0000 0000", "Debit Card", "1000 EGP"));
+        cardContainer.getChildren().add(newCard);
+        cardCount++;
+
+        XYChart.Series<String, Number> incomes = new XYChart.Series<>();
+        incomes.setName("Incomes");
+
+        XYChart.Series<String, Number> expenses = new XYChart.Series<>();
+        expenses.setName("Expenses");
+
+        // Data for the last 6 months
+        String[] months = {"Jul", "Aug", "Sep", "Nov", "Dec", "Jan"};
+        int[] incomeValues = {8000, 7500, 4000, 12000, 6500, 7000};
+        int[] expenseValues = {6000, 7000, 3900, 9000, 6000, 7100};
+
+        for (int i = 0; i < months.length; i++) {
+            incomes.getData().add(new XYChart.Data<>(months[i], incomeValues[i]));
+            expenses.getData().add(new XYChart.Data<>(months[i], expenseValues[i]));
+        }
+
+        barChart.getData().addAll(incomes, expenses);
+        barChart.setBarGap(1); // Gap between bars in the same group
+        barChart.widthProperty().addListener((obs, oldVal, newVal) -> {
+            double width = newVal.doubleValue();
+            if (width > 800) {
+                barChart.setCategoryGap(90);
+            } else if (width > 600) {
+                barChart.setCategoryGap(70);
+            } else {
+                barChart.setCategoryGap(20);
+            }
+        });
+
+        barChart.lookup(".chart-horizontal-grid-lines").setStyle("-fx-stroke: transparent;");
+        barChart.lookup(".chart-vertical-grid-lines").setStyle("-fx-stroke: transparent;");
+
+        //-------------------------------------------------------------------------------------------------------------------------------------------//
+        //sidebar
         setupHomeAnimation(homeIcon, homeLabel);
         setupUserAnimation(userIcon, userLabel);
         setupExchangeAnimation(exchangeIcon, exchangeLabel);
@@ -138,149 +238,266 @@ public class SettingsController {
         } else {
             System.out.println("Warning: homeGif is null");
         }
+        //---------------------------------------------------------------------------------------------------------------------------------------------//
 
-        //Mahmoud
-        currentUsername = UserSession.getInstance().getUsername();
-
-        if (currentUsername == null || currentUsername.isEmpty()) {
-            System.out.println("No user logged in.");
-            return;
-        }
-
-        // تحميل بيانات المستخدم
-        loadUserData();
     }
 
-    private void loadUserData() {
-        database_BankSystem.UserDetails userDetails = database_BankSystem.getUserDetails(currentUsername);
-        if (userDetails != null) {
-            fullNameField.setText(userDetails.getFullName());
-            emailField.setText(userDetails.getEmail());
-            phoneField.setText(userDetails.getMobile());
-            nationalIdField.setText(userDetails.getNationalId());
-            balanceField.setText(String.format("%.2f", userDetails.getTotalBalance()));
-            String imagePath = userDetails.getProfileImage();
-            if (imagePath != null && !imagePath.isEmpty()) {
-                profileImage.setImage(new Image("file:" + imagePath));
+    public void print(MouseEvent event) {
+        System.out.println("Hello World");
+    }
+
+    private void showFloatingCardWindow(Image cardImage, String name, String number, String type, String amount) {
+        Stage popupStage = new Stage();
+        popupStage.initStyle(StageStyle.TRANSPARENT);
+
+        VBox content = new VBox(10);
+        content.setAlignment(Pos.CENTER);
+        content.setStyle("""
+            -fx-padding: 20;
+            -fx-background-color: rgba(50, 50, 50, 0.2);
+            -fx-border-radius: 20;
+            -fx-background-radius: 20;
+            -fx-effect: dropshadow(gaussian, rgba(0,0,0,0), 20, 0.5, 0, 4);
+        """);
+
+        content.setEffect(new BoxBlur(15, 15, 3));
+
+        ImageView imgView = new ImageView(cardImage);
+        imgView.setFitWidth(250);
+        imgView.setFitHeight(150);
+
+        Label nameLabel = new Label("Name: " + name);
+        Label numberLabel = new Label("Card Number: " + number);
+        Label typeLabel = new Label("Type: " + type);
+        Label amountLabel = new Label("Amount: " + amount);
+
+        nameLabel.setFont(Font.font(16));
+        nameLabel.setStyle("-fx-text-fill: #ffffff;");
+        numberLabel.setFont(Font.font(16));
+        numberLabel.setStyle("-fx-text-fill: #ffffff;");
+        typeLabel.setFont(Font.font(16));
+        typeLabel.setStyle("-fx-text-fill: #ffffff;");
+        amountLabel.setFont(Font.font(16));
+        amountLabel.setStyle("-fx-text-fill: #ffffff;");
+
+        Button closeBtn = new Button("❌");
+        closeBtn.setStyle("-fx-background-color: transparent; -fx-font-size: 18; -fx-text-fill: #555;");
+        closeBtn.setOnAction(e -> popupStage.close());
+
+        VBox header = new VBox(closeBtn);
+        header.setAlignment(Pos.TOP_RIGHT);
+
+        content.getChildren().addAll(header, imgView, nameLabel, numberLabel, typeLabel, amountLabel);
+
+        StackPane root = new StackPane(content);
+        root.setStyle("-fx-background-color: rgba(0, 0, 0, 0);");
+
+        Rectangle clip = new Rectangle(400, 450);
+        clip.setArcWidth(40);
+        clip.setArcHeight(40);
+        root.setClip(clip);
+
+        Scene scene = new Scene(root, 400, 450);
+        scene.setFill(Color.TRANSPARENT);
+
+        popupStage.setScene(scene);
+        popupStage.setAlwaysOnTop(true);
+        popupStage.show();
+
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(600), content);
+        fadeIn.setFromValue(0);
+        fadeIn.setToValue(1);
+
+        ScaleTransition scaleIn = new ScaleTransition(Duration.millis(600), content);
+        scaleIn.setFromX(0.85);
+        scaleIn.setFromY(0.85);
+        scaleIn.setToX(1);
+        scaleIn.setToY(1);
+
+        fadeIn.play();
+        scaleIn.play();
+    }
+
+    @FXML
+    private void onAddCardClicked() {
+        if (cardCount >= maxCards) return;
+
+        Stage dialog = new Stage();
+        dialog.initStyle(StageStyle.TRANSPARENT);
+        dialog.setTitle("Add New Card");
+
+        VBox form = new VBox(10);
+        form.setPadding(new Insets(20));
+        form.setAlignment(Pos.CENTER);
+        form.setStyle("""
+                    -fx-background-color: rgba(255, 255, 255, 0.2);
+                    -fx-border-radius: 30;
+                    -fx-background-radius: 30;
+                    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 30, 0.2, 0, 8);
+                """);
+        form.setEffect(new BoxBlur(10, 10, 3));
+
+        StackPane root = new StackPane(form);
+        root.setStyle("-fx-background-color: rgba(0, 140, 255, 0.5);");
+
+        Rectangle clip = new Rectangle(320, 300);
+        clip.setArcWidth(50);
+        clip.setArcHeight(50);
+        root.setClip(clip);
+
+        // Card Type
+        ComboBox<String> cardTypeComboBox = new ComboBox<>();
+        cardTypeComboBox.getItems().addAll("Debit Card", "Credit Card", "Prepaid Card", "Virtual Card");
+        cardTypeComboBox.setPromptText("Select Card Type");
+        cardTypeComboBox.setPrefWidth(250);
+
+        // Amount Field
+        TextField amountField = new TextField();
+        amountField.setPromptText("Enter Amount");
+        amountField.setPrefWidth(250);
+
+        // Style fields
+        cardTypeComboBox.setStyle("-fx-background-radius: 12; -fx-font-size: 14px;");
+        amountField.setStyle("-fx-background-radius: 12; -fx-font-size: 14px;");
+
+        // Submit Button
+        Button addBtn = new Button("Add Card");
+        addBtn.setStyle("""
+                    -fx-background-color: linear-gradient(to right, #008cff,#6DD5FA);
+                    -fx-text-fill: white;
+                    -fx-font-size: 15px;
+                    -fx-font-weight: bold;
+                    -fx-background-radius: 30;
+                    -fx-padding: 8 20 8 20;
+                    -fx-cursor: hand;
+                    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0.3, 0, 4);
+                """);
+
+        // Close Button
+        Button closeBtn = new Button("❌");
+        closeBtn.setStyle("""
+                    -fx-background-color: transparent;
+                    -fx-font-size: 18;
+                    -fx-text-fill: #333;
+                """);
+        closeBtn.setOnAction(e -> dialog.close());
+
+        HBox topBar = new HBox(closeBtn);
+        topBar.setAlignment(Pos.TOP_RIGHT);
+        topBar.setPrefWidth(Double.MAX_VALUE);
+
+        Label title = new Label("Enter card info:");
+        title.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333;");
+
+        form.getChildren().addAll(topBar, title, cardTypeComboBox, amountField, addBtn);
+
+        Scene dialogScene = new Scene(root, 320, 300);
+        dialogScene.setFill(Color.TRANSPARENT);
+        dialog.setScene(dialogScene);
+        dialog.show();
+
+        // Handle "Add Card" action
+        addBtn.setOnAction(e -> {
+            String cardType = cardTypeComboBox.getValue();
+            String amount = amountField.getText();
+
+            if (cardType == null || amount.isEmpty()) return;
+
+            // Define card details for showFloatingCardWindow
+            String name = cardType; // Use card type as name
+            String number = "**** **** **** ****"; // Placeholder for card number
+            String type = cardType; // Card type
+            String amountValue = amount + " EGP"; // Amount with currency
+
+            // Add card based on cardCount
+            if (cardCount == 0) {
+                Image img = new Image(getClass().getResourceAsStream("/s2.png"));
+                ImageView newCard = new ImageView(img);
+                newCard.setFitWidth(250);
+                newCard.setFitHeight(170);
+                HBox.setMargin(newCard, new Insets(0, 0, 0, 0));
+                newCard.setOnMouseClicked(event -> showFloatingCardWindow(img, name, number, type, amountValue));
+                cardContainer.getChildren().add(newCard);
+                cardCount++;
+            } else if (cardCount == 1) {
+                Image img = new Image(getClass().getResourceAsStream("/s4.png"));
+                ImageView newCard = new ImageView(img);
+                newCard.setFitWidth(250);
+                newCard.setFitHeight(170);
+                HBox.setMargin(newCard, new Insets(0, 0, 0, -170));
+                newCard.setOnMouseClicked(event -> showFloatingCardWindow(img, name, number, type, amountValue));
+                cardContainer.getChildren().add(newCard);
+                cardCount++;
+            } else if (cardCount == 2) {
+                Image img = new Image(getClass().getResourceAsStream("/s3.png"));
+                ImageView newCard = new ImageView(img);
+                newCard.setFitWidth(250);
+                newCard.setFitHeight(170);
+                HBox.setMargin(newCard, new Insets(0, 0, 0, -170));
+                newCard.setOnMouseClicked(event -> showFloatingCardWindow(img, name, number, type, amountValue));
+                cardContainer.getChildren().add(newCard);
+                cardCount++;
+            } else if (cardCount == 3) {
+                Image img = new Image(getClass().getResourceAsStream("/s1.png"));
+                ImageView newCard = new ImageView(img);
+                newCard.setFitWidth(250);
+                newCard.setFitHeight(170);
+                HBox.setMargin(newCard, new Insets(0, 0, 0, -170));
+                newCard.setOnMouseClicked(event -> showFloatingCardWindow(img, name, number, type, amountValue));
+                cardContainer.getChildren().add(newCard);
+                cardCount++;
+                addCardButton.setVisible(false);
+                TranslateTransition moveLeft = new TranslateTransition(Duration.millis(500), cardContainer);
+                moveLeft.setByX(-60); // Move the HBox left by 60 pixels
+                moveLeft.play();
             }
-        } else {
-            System.out.println("Failed to load user details for: " + currentUsername);
-        }
+
+            dialog.close();
+        });
     }
 
-    @FXML
-    private void enableEditing() {
-        fullNameField.setEditable(true);
-        emailField.setEditable(true);
-        phoneField.setEditable(true);
-        nationalIdField.setEditable(true);
-        balanceField.setEditable(false);
-        saveButton.setDisable(false);
-        editButton.setDisable(true);
+    private HBox createTransactionCard(Object[] t) {
+        String name = (String) t[0];
+        String detail = (String) t[1];
+        String amount = (String) t[2];
+        String imgPath = (String) t[3];
+        Color color = (Color) t[4];
+
+        HBox box = new HBox(10);
+        box.setStyle("-fx-background-color: rgba(255,255,255,0.05); -fx-background-radius: 12;");
+        box.setPadding(new Insets(10));
+        box.setAlignment(Pos.CENTER_LEFT);
+        box.setPrefWidth(280);
+
+        // 👇 هنا تحط الأسطر دي
+        box.setPrefWidth(Region.USE_COMPUTED_SIZE);
+        box.setMaxWidth(Double.MAX_VALUE);
+
+
+        ImageView img = new ImageView(new Image(getClass().getResourceAsStream(imgPath)));
+        img.setFitWidth(40);
+        img.setFitHeight(40);
+        img.setClip(new Circle(20, 20, 20));
+
+        VBox texts = new VBox(3);
+        Label nameLabel = new Label(name);
+        nameLabel.setStyle("-fx-text-fill: white; -fx-font-size: 14;");
+        Label detailLabel = new Label(detail);
+        detailLabel.setStyle("-fx-text-fill: gray; -fx-font-size: 12;");
+        texts.getChildren().addAll(nameLabel, detailLabel);
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        Label amountLabel = new Label(amount);
+        amountLabel.setTextFill(color);
+        amountLabel.setStyle("-fx-font-size: 14;");
+
+        box.getChildren().addAll(img, texts, spacer, amountLabel);
+        return box;
     }
-    @FXML
-    private void saveChanges() {
-        boolean updated = database_BankSystem.updateUserDetails(
-                currentUsername,
-                fullNameField.getText(),
-                emailField.getText(),
-                phoneField.getText(),
-                newImagePath != null ? newImagePath : getCurrentImagePath()
-        );
-
-        if (updated) {
-            System.out.println("User data updated successfully!");
-        } else {
-            System.out.println("Failed to update user data.");
-        }
-
-        fullNameField.setEditable(false);
-        emailField.setEditable(false);
-        phoneField.setEditable(false);
-        nationalIdField.setEditable(false);
-        saveButton.setDisable(true);
-        editButton.setDisable(false);
-
-        loadUserData();
-    }
-
-    @FXML
-    private void changeProfileImage() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Select Profile Picture");
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
-        );
-        File selectedFile = fileChooser.showOpenDialog(null);
-
-        if (selectedFile != null) {
-            newImagePath = selectedFile.getAbsolutePath();
-            profileImage.setImage(new Image("file:" + newImagePath));
-        }
-    }
-
-    @FXML
-    private void handleLogout(ActionEvent event) {
-        try {
-            UserSession session = UserSession.getInstance();
-            session.clear();
-
-            Parent root = FXMLLoader.load(getClass().getResource("/com/example/maged/login.fxml"));
-            Image backgroundImage = new Image(getClass().getResourceAsStream("/back.jpg"));
-            ImageView backgroundView = new ImageView(backgroundImage);
-
-            // الحصول على حجم الشاشة
-            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-            double screenWidth = screenBounds.getWidth();
-            double screenHeight = screenBounds.getHeight();
-
-            // إعداد الخلفية
-            backgroundView.setFitWidth(screenWidth);
-            backgroundView.setFitHeight(screenHeight);
-            backgroundView.setPreserveRatio(false);
-            backgroundView.setEffect(new GaussianBlur(20));
-
-            // عمل طبقة شفافة زرقاء
-            Region blueOverlay = new Region();
-            blueOverlay.setBackground(new Background(new BackgroundFill(
-                    Color.rgb(0, 120, 255, 0.2),
-                    CornerRadii.EMPTY,
-                    Insets.EMPTY
-            )));
-            blueOverlay.setEffect(new GaussianBlur(20));
-            blueOverlay.setPrefSize(screenWidth, screenHeight);
-
-            // وضع كل العناصر في StackPane
-            StackPane stackPane = new StackPane();
-            stackPane.getChildren().addAll(backgroundView, blueOverlay, root);
-
-            // إنشاء المشهد
-            Scene scene = new Scene(stackPane);
-
-            // الحصول على الـ stage الحالي
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(scene);
-            stage.setTitle("Bank System - Login");
-            stage.setWidth(800);
-            stage.setHeight(600);
-            stage.centerOnScreen();
-            stage.show();
-        } catch (IOException e) {
-            System.out.println("Error loading Login page: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private String getCurrentImagePath() {
-        database_BankSystem.UserDetails userDetails = database_BankSystem.getUserDetails(currentUsername);
-        if (userDetails != null) {
-            return userDetails.getProfileImage();
-        }
-        return null;
-    }
-
-
-    //Mahmoud -------------------------//
+    //---------------------------------------------------------------------------------------------------------------------------------------------//
+    //sidebar
     private void setupHomeAnimation(FontAwesomeIconView icon, Label label) {
         if (icon == null || label == null) {
             System.out.println("Warning: homeIcon or homeLabel is null");
@@ -664,190 +881,7 @@ public class SettingsController {
             scale.setY(1);
         });
     }
-
-    @FXML
-    protected void switchToLogin(ActionEvent event) throws IOException {
-        UserSession session = UserSession.getInstance();
-        Parent root = FXMLLoader.load(getClass().getResource("/com/example/maged/login.fxml"));
-        Image backgroundImage = new Image(getClass().getResourceAsStream("/back.jpg"));
-        ImageView backgroundView = new ImageView(backgroundImage);
-
-        // الحصول على حجم الشاشة
-        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        double screenWidth = screenBounds.getWidth();
-        double screenHeight = screenBounds.getHeight();
-
-        // إعداد الخلفية
-        backgroundView.setFitWidth(screenWidth);
-        backgroundView.setFitHeight(screenHeight);
-        backgroundView.setPreserveRatio(false);
-        backgroundView.setEffect(new GaussianBlur(20));
-
-        // عمل طبقة شفافة زرقاء
-        Region blueOverlay = new Region();
-        blueOverlay.setBackground(new Background(new BackgroundFill(
-                Color.rgb(0, 120, 255, 0.2),
-                CornerRadii.EMPTY,
-                Insets.EMPTY
-        )));
-        blueOverlay.setEffect(new GaussianBlur(20));
-        blueOverlay.setPrefSize(screenWidth, screenHeight);
-
-        // وضع كل العناصر في StackPane
-        StackPane stackPane = new StackPane();
-        stackPane.getChildren().addAll(backgroundView, blueOverlay, root);
-
-        // إنشاء المشهد
-        Scene scene = new Scene(stackPane);
-
-        scene.getStylesheets().clear();
-
-        // الحصول على الـ stage الحالي
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(scene);
-        stage.setTitle("LOG IN");
-        stage.setWidth(800);
-        stage.setHeight(600);
-        stage.centerOnScreen();
-        stage.show();
-    }
-    @FXML
-    protected void ToPayment(MouseEvent event) throws IOException {
-        UserSession session = UserSession.getInstance();
-        Parent root = FXMLLoader.load(getClass().getResource("/com/example/maged/Payment.fxml"));
-        Image backgroundImage = new Image(getClass().getResourceAsStream("/back.jpg"));
-        ImageView backgroundView = new ImageView(backgroundImage);
-
-        // الحصول على حجم الشاشة
-        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        double screenWidth = screenBounds.getWidth();
-        double screenHeight = screenBounds.getHeight();
-
-        // إعداد الخلفية
-        backgroundView.setFitWidth(screenWidth);
-        backgroundView.setFitHeight(screenHeight);
-        backgroundView.setPreserveRatio(false);
-        backgroundView.setEffect(new GaussianBlur(20));
-
-        // طبقة شفافة زرقاء
-        Region blueOverlay = new Region();
-        blueOverlay.setBackground(new Background(new BackgroundFill(
-                Color.rgb(0, 120, 255, 0.2),
-                CornerRadii.EMPTY,
-                Insets.EMPTY
-        )));
-        blueOverlay.setEffect(new GaussianBlur(20));
-        blueOverlay.setPrefSize(screenWidth, screenHeight);
-
-        // تجميع في StackPane
-        StackPane stackPane = new StackPane();
-        stackPane.getChildren().addAll(backgroundView, blueOverlay, root);
-
-        // إنشاء المشهد
-        Scene scene = new Scene(stackPane);
-        scene.getStylesheets().clear();
-
-        // الحصول على الـ stage الحالي
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(scene);
-        stage.setTitle("Payment");
-        stage.setWidth(800);
-        stage.setHeight(600);
-        stage.centerOnScreen();
-        stage.show();
-    }
-    @FXML
-    protected void ToFindUs(MouseEvent event) throws IOException {
-        UserSession session = UserSession.getInstance();
-        Parent root = FXMLLoader.load(getClass().getResource("/com/example/maged/Map.fxml"));
-        Image backgroundImage = new Image(getClass().getResourceAsStream("/back.jpg"));
-        ImageView backgroundView = new ImageView(backgroundImage);
-
-        // الحصول على حجم الشاشة
-        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        double screenWidth = screenBounds.getWidth();
-        double screenHeight = screenBounds.getHeight();
-
-        // إعداد الخلفية
-        backgroundView.setFitWidth(screenWidth);
-        backgroundView.setFitHeight(screenHeight);
-        backgroundView.setPreserveRatio(false);
-        backgroundView.setEffect(new GaussianBlur(20));
-
-        // طبقة شفافة زرقاء
-        Region blueOverlay = new Region();
-        blueOverlay.setBackground(new Background(new BackgroundFill(
-                Color.rgb(0, 120, 255, 0.2),
-                CornerRadii.EMPTY,
-                Insets.EMPTY
-        )));
-        blueOverlay.setEffect(new GaussianBlur(20));
-        blueOverlay.setPrefSize(screenWidth, screenHeight);
-
-        // تجميع في StackPane
-        StackPane stackPane = new StackPane();
-        stackPane.getChildren().addAll(backgroundView, blueOverlay, root);
-
-        // إنشاء المشهد
-        Scene scene = new Scene(stackPane);
-        scene.getStylesheets().clear();
-
-        // الحصول على الـ stage الحالي
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(scene);
-        stage.setTitle("FindUs");
-        stage.setWidth(800);
-        stage.setHeight(600);
-        stage.centerOnScreen();
-        stage.show();
-    }
-    @FXML
-    protected void ToAccount(MouseEvent event) throws IOException {
-        UserSession session = UserSession.getInstance();
-        Parent root = FXMLLoader.load(getClass().getResource("/com/example/maged/Account.fxml"));
-        Image backgroundImage = new Image(getClass().getResourceAsStream("/back.jpg"));
-        ImageView backgroundView = new ImageView(backgroundImage);
-
-        // الحصول على حجم الشاشة
-        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        double screenWidth = screenBounds.getWidth();
-        double screenHeight = screenBounds.getHeight();
-
-        // إعداد الخلفية
-        backgroundView.setFitWidth(screenWidth);
-        backgroundView.setFitHeight(screenHeight);
-        backgroundView.setPreserveRatio(false);
-        backgroundView.setEffect(new GaussianBlur(20));
-
-        // طبقة شفافة زرقاء
-        Region blueOverlay = new Region();
-        blueOverlay.setBackground(new Background(new BackgroundFill(
-                Color.rgb(0, 120, 255, 0.2),
-                CornerRadii.EMPTY,
-                Insets.EMPTY
-        )));
-        blueOverlay.setEffect(new GaussianBlur(20));
-        blueOverlay.setPrefSize(screenWidth, screenHeight);
-
-        // تجميع في StackPane
-        StackPane stackPane = new StackPane();
-        stackPane.getChildren().addAll(backgroundView, blueOverlay, root);
-
-        // إنشاء المشهد
-        Scene scene = new Scene(stackPane);
-        scene.getStylesheets().clear();
-
-        // الحصول على الـ stage الحالي
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(scene);
-        stage.setTitle("FindUs");
-        stage.setWidth(800);
-        stage.setHeight(600);
-        stage.centerOnScreen();
-        stage.show();
-    }
-
-
-
+    //---------------------------------------------------------------------------------------------------------------------------------------------//
 
 }
+

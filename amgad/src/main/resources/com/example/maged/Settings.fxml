@@ -1,21 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.effect.Glow?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import de.jensd.fx.glyphs.fontawesome.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<BorderPane style="-fx-background-color: transparent;" stylesheets="@Settings.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.banking.SettingsController">
+<BorderPane style="-fx-background-color: transparent;" stylesheets="@Settings.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.banking.SettingsController">
     <!-- Sidebar -->
     <left>
         <AnchorPane prefHeight="418.0" prefWidth="220.0" style="-fx-background-color: rgba(0,0,0,0.3); -fx-background-radius: 15px; -fx-padding: 30px;" styleClass="Sidebar" BorderPane.alignment="CENTER">
@@ -32,7 +25,7 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="213.0" spacing="12" styleClass="menu-item">
                             <FontAwesomeIconView fx:id="userIcon" fill="WHITE" glyphName="USER" size="24" />
-                            <Label fx:id="userLabel" text="Accounts" textFill="WHITE">
+                            <Label fx:id="userLabel" onMouseClicked="#ToAccount" text="Accounts" textFill="WHITE">
                                 <font>
                                     <Font name="System Regular" size="16.0" />
                                 </font>
@@ -48,7 +41,7 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" prefHeight="34.0" prefWidth="227.0" spacing="12" styleClass="menu-item">
                             <FontAwesomeIconView fx:id="moneyIcon" fill="WHITE" glyphName="MONEY" size="24" />
-                            <Label fx:id="moneyLabel" prefHeight="26.0" prefWidth="195.0" text="Payments Transfers" textFill="WHITE">
+                            <Label fx:id="moneyLabel" onMouseClicked="#ToPayment" prefHeight="26.0" prefWidth="195.0" text="Payments Transfers" textFill="WHITE">
                                 <font>
                                     <Font name="System Regular" size="16.0" />
                                 </font>
@@ -69,7 +62,7 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="213.0" spacing="12" styleClass="menu-item">
                             <FontAwesomeIconView fx:id="mapIcon" fill="WHITE" glyphName="MAP" size="24" />
-                            <Label fx:id="mapLabel" text="Find Us" textFill="WHITE">
+                            <Label fx:id="mapLabel" onMouseClicked="#ToFindUs" text="Find Us" textFill="WHITE">
                                 <font>
                                     <Font name="System Regular" size="16.0" />
                                 </font>
