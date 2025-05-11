@@ -21,39 +21,42 @@ public class Main extends Application {
         // Initialize database tables
         database_BankSystem.createTables();
 
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("HomePage.fxml"));
+        // تحميل ملف FXML
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/maged/Home.fxml"));
         Parent rootNode = fxmlLoader.load();
 
-        // Load background image
+        // تحميل صورة الخلفية
         Image backgroundImage = new Image(getClass().getResourceAsStream("/back.jpg"));
         ImageView backgroundView = new ImageView(backgroundImage);
 
-        // Get screen dimensions
+        // أبعاد الشاشة
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         double screenWidth = screenBounds.getWidth();
         double screenHeight = screenBounds.getHeight();
 
-        // Fit background to screen
+        // ضبط صورة الخلفية
         backgroundView.setFitWidth(screenWidth);
         backgroundView.setFitHeight(screenHeight);
         backgroundView.setPreserveRatio(false);
         backgroundView.setEffect(new GaussianBlur(20));
 
-        // Create a transparent blue overlay
+        // طبقة زرقاء شفافة
         Region blueOverlay = new Region();
         blueOverlay.setBackground(new Background(new BackgroundFill(Color.rgb(0, 120, 255, 0.2), CornerRadii.EMPTY, Insets.EMPTY)));
         blueOverlay.setEffect(new GaussianBlur(20));
         blueOverlay.setPrefSize(screenWidth, screenHeight);
 
-        // Stack background, overlay, and FXML UI
+        // StackPane يحتوي كل العناصر
         StackPane stackPane = new StackPane();
         stackPane.getChildren().addAll(backgroundView, blueOverlay, rootNode);
 
-        // Create the scene using the stackPane as the root
-        Scene scene = new Scene(stackPane, 1124, 700); // or use screenWidth, screenHeight if you want full screen
-        scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
+        // إنشاء المشهد
+        Scene scene = new Scene(stackPane, 1124, 700);
 
-        // Window settings
+        // تحميل ملف CSS (تعديل حسب الملف الذي تريد استخدامه)
+        scene.getStylesheets().add(getClass().getResource("/com/example/maged/Style.css").toExternalForm());
+
+        // إعدادات النافذة
         primaryStage.setTitle("Bank");
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/bank-icon.jpeg")));
         primaryStage.setScene(scene);
