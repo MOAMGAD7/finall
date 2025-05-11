@@ -1,4 +1,3 @@
-//
 
 .menu-item:hover {
     -fx-background-color: rgba(200, 200, 200, 0.2); /* Semi-transparent gray */
@@ -12,4 +11,27 @@
 
 .menu-item Label {
     -fx-font-weight: bold;
+}
+
+.label-link:hover {
+    -fx-background-color: rgba(200, 200, 200, 0.2); /* Semi-transparent gray */
+    -fx-background-radius: 25;
+    -fx-underline: true;    /* خط تحت النص */
+    -fx-cursor: hand;       /* شكل اليد عند المرور */
+}
+
+.button-main:hover {
+    -fx-background-color: linear-gradient(to right, #0073e6, #0099cc);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 8, 0.0, 0, 3);
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+}
+
+/* style.css */
+.stack-pane {
+    -fx-background-color: transparent;
+}
+
+.image-view {
+    -fx-background-color: transparent;
 }

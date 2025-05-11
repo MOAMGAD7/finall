@@ -21,8 +21,8 @@ public class Main extends Application {
         // Initialize database tables
         database_BankSystem.createTables();
 
-        // Load the initial scene (e.g., Login page)
-        Parent root = FXMLLoader.load(getClass().getResource("/com/example/maged/Login.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("HomePage.fxml"));
+        Parent rootNode = fxmlLoader.load();
 
         // Load background image
         Image backgroundImage = new Image(getClass().getResourceAsStream("/back.jpg"));
@@ -41,28 +41,22 @@ public class Main extends Application {
 
         // Create a transparent blue overlay
         Region blueOverlay = new Region();
-        blueOverlay.setBackground(new Background(new BackgroundFill(
-                Color.rgb(0, 120, 255, 0.2),
-                CornerRadii.EMPTY,
-                Insets.EMPTY
-        )));
+        blueOverlay.setBackground(new Background(new BackgroundFill(Color.rgb(0, 120, 255, 0.2), CornerRadii.EMPTY, Insets.EMPTY)));
         blueOverlay.setEffect(new GaussianBlur(20));
         blueOverlay.setPrefSize(screenWidth, screenHeight);
 
         // Stack background, overlay, and FXML UI
         StackPane stackPane = new StackPane();
-        stackPane.getChildren().addAll(backgroundView, blueOverlay, root);
+        stackPane.getChildren().addAll(backgroundView, blueOverlay, rootNode);
 
-        // Create the scene
-        Scene scene = new Scene(stackPane);
+        // Create the scene using the stackPane as the root
+        Scene scene = new Scene(stackPane, 1124, 700); // or use screenWidth, screenHeight if you want full screen
+        scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
 
-
-        // Set up the primary stage
+        // Window settings
+        primaryStage.setTitle("Bank");
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/bank-icon.jpeg")));
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Bank App");
-        primaryStage.setWidth(800);
-        primaryStage.setHeight(600);
-        primaryStage.centerOnScreen();
         primaryStage.show();
     }
 
