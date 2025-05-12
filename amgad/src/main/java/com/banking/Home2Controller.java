@@ -25,7 +25,13 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 
-public class HomeController {
+public class Home2Controller {
+
+    @FXML
+    private ImageView HomeImage;
+
+    @FXML
+    private Label HomeText1;
 
     @FXML
     private VBox welcomeBox;
@@ -50,6 +56,18 @@ public class HomeController {
 
     @FXML
     public void initialize() {
+
+        //DataBase
+
+        UserSession session = UserSession.getInstance();
+        String username = session.getUsername();
+        HomeText1.setText(username);
+
+        database_BankSystem.UserDetails userDetails = database_BankSystem.getUserDetails(username);
+        String imagePath = userDetails.getProfileImage();
+        if (imagePath != null && !imagePath.isEmpty()) {
+            HomeImage.setImage(new Image("file:" + imagePath));
+        }
         // Initialize audio
         try {
             String audioPath = getClass().getResource("/audio/Welcome4.mp3").toExternalForm();
@@ -86,6 +104,8 @@ public class HomeController {
             System.err.println("Error loading audio: " + e.getMessage());
             e.printStackTrace();
         }
+
+
 
         // Set initial state for welcomeBox and labels
         welcomeBox.setTranslateY(-100);
@@ -229,55 +249,9 @@ public class HomeController {
     }
 
     @FXML
-    protected void ToLogin(ActionEvent event) throws IOException {
+    protected void ToAccount(MouseEvent event) throws IOException {
         UserSession session = UserSession.getInstance();
-        Parent root = FXMLLoader.load(getClass().getResource("/com/example/maged/login.fxml"));
-        Image backgroundImage = new Image(getClass().getResourceAsStream("/back.jpg"));
-        ImageView backgroundView = new ImageView(backgroundImage);
-
-        // الحصول على حجم الشاشة
-        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        double screenWidth = screenBounds.getWidth();
-        double screenHeight = screenBounds.getHeight();
-
-        // إعداد الخلفية
-        backgroundView.setFitWidth(screenWidth);
-        backgroundView.setFitHeight(screenHeight);
-        backgroundView.setPreserveRatio(false);
-        backgroundView.setEffect(new GaussianBlur(20));
-
-        // عمل طبقة شفافة زرقاء
-        Region blueOverlay = new Region();
-        blueOverlay.setBackground(new Background(new BackgroundFill(
-                Color.rgb(0, 120, 255, 0.2),
-                CornerRadii.EMPTY,
-                Insets.EMPTY
-        )));
-        blueOverlay.setEffect(new GaussianBlur(20));
-        blueOverlay.setPrefSize(screenWidth, screenHeight);
-
-        // وضع كل العناصر في StackPane
-        StackPane stackPane = new StackPane();
-        stackPane.getChildren().addAll(backgroundView, blueOverlay, root);
-
-        // إنشاء المشهد
-        Scene scene = new Scene(stackPane);
-
-        scene.getStylesheets().clear();
-
-        // الحصول على الـ stage الحالي
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(scene);
-        stage.setTitle("LOG IN");
-        stage.setWidth(1550);
-        stage.setHeight(840);
-        stage.centerOnScreen();
-        stage.show();
-    }
-    @FXML
-    protected void ToSignUp(MouseEvent event) throws IOException {
-        UserSession session = UserSession.getInstance();
-        Parent root = FXMLLoader.load(getClass().getResource("/com/example/maged/signup.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/com/example/maged/Account.fxml"));
         Image backgroundImage = new Image(getClass().getResourceAsStream("/back.jpg"));
         ImageView backgroundView = new ImageView(backgroundImage);
 
@@ -313,11 +287,10 @@ public class HomeController {
         // الحصول على الـ stage الحالي
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
-        stage.setTitle("SIGN UP");
+        stage.setTitle("FindUs");
         stage.setWidth(1550);
         stage.setHeight(840);
         stage.centerOnScreen();
-
         stage.show();
     }
 

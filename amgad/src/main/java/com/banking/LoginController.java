@@ -91,7 +91,7 @@ public class LoginController {
             errorLabel.setText("Login successful! Redirecting to Dashboard...");
 
             // الانتقال إلى صفحة الـ Dashboard
-            Parent root = FXMLLoader.load(getClass().getResource("/com/example/maged/dashboard.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/com/example/maged/Home2.fxml"));
             Image backgroundImage = new Image(getClass().getResourceAsStream("/back.jpg"));
             ImageView backgroundView = new ImageView(backgroundImage);
 
@@ -125,13 +125,12 @@ public class LoginController {
 
             scene.getStylesheets().clear();
 
-
             // الحصول على الـ stage الحالي
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(scene);
             stage.setTitle("SIGN UP");
-            stage.setWidth(800);
-            stage.setHeight(600);
+            stage.setWidth(1124);
+            stage.setHeight(700);
             stage.centerOnScreen();
             stage.show();
             // إعادة تعيين عدد المحاولات بعد تسجيل دخول ناجح
@@ -218,8 +217,8 @@ public class LoginController {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.setTitle("Forget Password");
-        stage.setWidth(800);
-        stage.setHeight(600);
+        stage.setWidth(1550);
+        stage.setHeight(840);
         stage.centerOnScreen();
         stage.show();
     }
@@ -266,8 +265,8 @@ public class LoginController {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.setTitle("SIGN UP");
-        stage.setWidth(800);
-        stage.setHeight(600);
+        stage.setWidth(1550);
+        stage.setHeight(840);
         stage.centerOnScreen();
         stage.show();
     }

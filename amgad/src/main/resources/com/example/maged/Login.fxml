@@ -21,7 +21,7 @@
                 <!-- Title with Icon -->
                 <HBox alignment="CENTER" prefHeight="50.0" spacing="10" style="-fx-background-color: trn; -fx-background-radius: 15px; -fx-padding: 5;">
                     <children>
-                        <FontAwesomeIconView fill="WHITE" glyphName="BANK" size="30">
+                        <FontAwesomeIconView fill="#00ddff" glyphName="BANK" size="30">
                      <HBox.margin>
                         <Insets right="-20.0" />
                      </HBox.margin></FontAwesomeIconView>
@@ -42,7 +42,7 @@
                 <!-- Username Field with Icon -->
                 <HBox alignment="CENTER" prefHeight="45.0" spacing="10" style="-fx-background-color: transpernt; -fx-background-radius: 12px; -fx-padding: 8 12;">
                     <children>
-                        <FontAwesomeIconView fill="WHITE" glyphName="USER" size="26" />
+                        <FontAwesomeIconView fill="#00ddff" glyphName="USER" size="26" />
                         <TextField fx:id="usernameField" promptText="Username" style="-fx-font-size: 14px; -fx-background-radius: 10px; -fx-background-color: rgba(0,0,0,0.25); -fx-border-color: rgba(0,191,255,0.7); -fx-border-radius: 10px; -fx-border-width: 1.5px; -fx-text-fill: #ffffff; -fx-prompt-text-fill: rgba(255,255,255,0.7); -fx-padding: 8 12;" HBox.hgrow="ALWAYS">
                         </TextField>
                     </children>
@@ -54,7 +54,7 @@
                 <!-- Password Field with Icon -->
                 <HBox alignment="CENTER" prefHeight="45.0" spacing="10" style="-fx-background-color: transpernt; -fx-background-radius: 12px; -fx-padding: 8 12;">
                     <children>
-                        <FontAwesomeIconView fill="WHITE" glyphName="LOCK" size="26" />
+                        <FontAwesomeIconView fill="#00ddff" glyphName="LOCK" size="26" />
                         <PasswordField fx:id="passwordField" promptText="Password" style="-fx-font-size: 14px; -fx-background-radius: 10px; -fx-background-color: rgba(0,0,0,0.25); -fx-border-color: rgba(0,191,255,0.7); -fx-border-radius: 10px; -fx-border-width: 1.5px; -fx-text-fill: #ffffff; -fx-prompt-text-fill: rgba(255,255,255,0.7); -fx-padding: 8 12;" HBox.hgrow="ALWAYS">
                         </PasswordField>
                     </children>
@@ -68,7 +68,7 @@
                     <children>
                         <Hyperlink fx:id="forgetPasswordLink" onAction="#handleForgetPassword" style="-fx-font-size: 13px; -fx-text-fill: white; -fx-underline: true; -fx-font-weight: bold;" text="Forget Password?">
                             <graphic>
-                                <FontAwesomeIconView fill="WHITE" glyphName="QUESTION_CIRCLE" size="14" />
+                                <FontAwesomeIconView fill="#00ddff" glyphName="QUESTION_CIRCLE" size="14" />
                             </graphic>
                         </Hyperlink>
                     </children>
@@ -100,7 +100,7 @@
                         </Label>
                         <Hyperlink onAction="#switchToSignup" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-underline: true; -fx-font-size: 13px;" text="Sign Up">
                             <graphic>
-                                <FontAwesomeIconView fill="WHITE" glyphName="USER_PLUS" size="14" />
+                                <FontAwesomeIconView fill="#00ddff" glyphName="USER_PLUS" size="14" />
                             </graphic>
                             <HBox.margin>
                                 <Insets left="5.0" />

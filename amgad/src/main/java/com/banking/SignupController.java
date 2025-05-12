@@ -202,8 +202,7 @@ public class SignupController {
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 stage.setScene(scene);
                 stage.setTitle("VERIFY");
-                stage.setWidth(800);
-                stage.setHeight(600);
+                stage.setFullScreen(true);
                 stage.centerOnScreen();
                 stage.show();
 
@@ -337,8 +336,8 @@ public class SignupController {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.setTitle("LOG IN");
-        stage.setWidth(800);
-        stage.setHeight(600);
+        stage.setWidth(1550);
+        stage.setHeight(840);
         stage.centerOnScreen();
         stage.show();
     }

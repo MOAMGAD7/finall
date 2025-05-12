@@ -19,7 +19,6 @@
     -fx-underline: true;    /* خط تحت النص */
     -fx-cursor: hand;       /* شكل اليد عند المرور */
 }
-
 .button-main:hover {
     -fx-background-color: linear-gradient(to right, #0073e6, #0099cc);
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 8, 0.0, 0, 3);
