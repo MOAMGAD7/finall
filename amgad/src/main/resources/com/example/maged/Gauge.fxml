@@ -96,7 +96,7 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="213.0" spacing="12" styleClass="menu-item">
                             <FontAwesomeIconView fx:id="helpIcon" fill="WHITE" glyphName="QUESTION_CIRCLE" size="24" />
-                            <Label fx:id="helpLabel" text="Help" textFill="WHITE">
+                            <Label fx:id="helpLabel" text="Help" textFill="WHITE" onMouseClicked="#ToHelp">
                                 <font>
                                     <Font name="System Regular" size="16.0" />
                                 </font>

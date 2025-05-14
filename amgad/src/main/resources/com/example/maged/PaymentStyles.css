@@ -303,9 +303,6 @@ BorderPane, AnchorPane, StackPane {
     -fx-transition: opacity 0.4s ease-in-out;
 }
 
-.fade-transition:exiting {
-    -fx-opacity: 0;
-}
 
 /* Scale transition effect for dramatic entrances */
 .scale-transition {
@@ -314,11 +311,6 @@ BorderPane, AnchorPane, StackPane {
     -fx-transition: -fx-scale-x 0.3s ease-out, -fx-scale-y 0.3s ease-out, opacity 0.3s ease-out;
 }
 
-.scale-transition:entering {
-    -fx-scale-x: 0.7;
-    -fx-scale-y: 0.7;
-    -fx-opacity: 0;
-}
 
 /* Pop-up transition for dialogs and modals */
 .popup-transition {
@@ -427,9 +419,7 @@ BorderPane, AnchorPane, StackPane {
     -fx-transition: opacity 0.4s ease-in-out;
 }
 
-.fade-transition:exiting {
-    -fx-opacity: 0;
-}
+
 
 /* Scale transition effect for dramatic entrances */
 .scale-transition {
@@ -438,11 +428,7 @@ BorderPane, AnchorPane, StackPane {
     -fx-transition: -fx-scale-x 0.3s ease-out, -fx-scale-y 0.3s ease-out, opacity 0.3s ease-out;
 }
 
-.scale-transition:entering {
-    -fx-scale-x: 0.95;
-    -fx-scale-y: 0.95;
-    -fx-opacity: 0;
-}
+
 
 /* Make scene transitions smooth with opacity change */
 .scene {

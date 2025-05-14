@@ -1,9 +1,9 @@
 package com.banking;
+
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -12,8 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
@@ -29,13 +28,9 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
-import java.util.List;
 
+public class HelpController {
 
-
-
-
-public class ChatBotController {
 
     //------------------------------------------------------------------------------------------------------------------------------------------//
     //sidebar
@@ -93,32 +88,21 @@ public class ChatBotController {
 
     @FXML
     private ImageView homeGif;
-    //-------------------------------------------------------------------------------------------------------------//
-
+    //-------------------------------------------------------------------------------------------------------------
 
     @FXML
-    private  Label AccountUser5;
-    @FXML private TextField questionField;
-    @FXML private ScrollPane chatScrollPane;
-    @FXML private VBox chatHistory;
+    private TextArea helpTextArea;
 
-    private String currentUsername;
+    @FXML
+    private Label AccountUser6;
+
 
     @FXML
     public void initialize() {
-
-
-
-        // Get the username from the session
-        UserSession session = UserSession.getInstance();
-        currentUsername = session.getUsername();
-        if (currentUsername == null) {
-            addMessageToChat("System", "User session not found. Please log in again.", "message-system");
-        } else {
-            addMessageToChat("Assistant", "Hello! How can I assist you today with any questions you have about banking services?", "message-assistant");
-        }
         //Data Base
-        AccountUser5.setText(currentUsername);
+        UserSession session = UserSession.getInstance();
+        String username = session.getUsername();
+        AccountUser6.setText(username);
 
         //-------------------------------------------------------------------------------------------------------------------------------------------//
         //sidebar
@@ -150,6 +134,98 @@ public class ChatBotController {
         }
         //---------------------------------------------------------------------------------------------------------------------------------------------//
 
+        if (helpTextArea != null) {
+            helpTextArea.setText(
+                    "🏦 Welcome to YourBank Help Center\n" +
+                            "This help page is designed to guide you through every feature of your digital banking experience.\n" +
+                            "Explore tips, FAQs, and important reminders to help you bank smart and securely.\n\n" +
+
+                            "🔐 Login & Security\n" +
+                            "• Enter your registered email and password to access your account.\n" +
+                            "• After 3 failed login attempts, your account will be temporarily locked for 60 seconds.\n" +
+                            "• Use the 'Forgot Password' option if you're unable to sign in.\n" +
+                            "• Your password should be at least 8 characters with a mix of letters, numbers, and symbols.\n" +
+                            "• Never share your credentials with anyone.\n\n" +
+
+                            "👤 Account Settings\n" +
+                            "• Update your name, email, and phone number from the Settings page.\n" +
+                            "• Set or change your profile picture.\n" +
+                            "• Enable two-factor authentication (2FA) for added protection.\n" +
+                            "• View recent device logins and active sessions.\n\n" +
+
+                            "💳 Managing Cards\n" +
+                            "• You can manage up to 4 active cards per account.\n" +
+                            "• Activate or deactivate cards in real-time.\n" +
+                            "• Lost a card? Freeze it immediately from the Cards tab.\n" +
+                            "• Set spending limits per card.\n" +
+                            "• Monitor individual card balances.\n\n" +
+
+                            "📊 Dashboard Overview\n" +
+                            "• Get a snapshot of your current balance, recent transactions, and card usage.\n" +
+                            "• View graphs showing income vs. spending trends.\n" +
+                            "• Filter analytics by category, date, or transaction type.\n" +
+                            "• Customize your dashboard layout.\n\n" +
+
+                            "💸 Transfers & Payments\n" +
+                            "• Instantly transfer money between your accounts or to others.\n" +
+                            "• You’ll need the recipient’s IBAN or registered account number.\n" +
+                            "• Save trusted recipients for quicker transactions.\n" +
+                            "• Schedule future or recurring payments easily.\n" +
+                            "• Track each payment status: pending, completed, or failed.\n\n" +
+
+                            "📱 Mobile Recharge\n" +
+                            "• Recharge prepaid mobile numbers in seconds.\n" +
+                            "• Supported networks include Vodafone, Orange, Etisalat, and We.\n" +
+                            "• View recharge history and track usage.\n\n" +
+
+                            "🏛️ Government Payments\n" +
+                            "• Pay taxes, traffic fines, and social insurance securely.\n" +
+                            "• Use your national ID for government verification.\n\n" +
+
+                            "🎓 Education Payments\n" +
+                            "• Pay school/university fees through partnered institutions.\n" +
+                            "• Save receipt confirmation for future reference.\n\n" +
+
+                            "🛡️ Insurance & Donations\n" +
+                            "• Pay life, car, or health insurance premiums.\n" +
+                            "• Make donations to approved charities.\n" +
+                            "• Get instant digital receipts after every payment.\n\n" +
+
+                            "🤖 Chatbot Assistant\n" +
+                            "• Use the built-in AI assistant to get real-time help.\n" +
+                            "• Ask questions like 'How do I transfer money?' or 'Where can I view my card balance?'\n" +
+                            "• Available 24/7 with smart suggestions based on your usage.\n\n" +
+
+                            "🧾 Transaction History\n" +
+                            "• Search transactions by keyword, amount, or date.\n" +
+                            "• Export statements in PDF or Excel formats.\n" +
+                            "• View all transaction details including location, status, and remarks.\n\n" +
+
+                            "📧 Notifications & Alerts\n" +
+                            "• Enable push or email alerts for every transaction.\n" +
+                            "• Set custom alerts for high spending, low balance, or failed logins.\n\n" +
+
+                            "📞 Need Support?\n" +
+                            "• Contact our support team at support@yourbank.com\n" +
+                            "• Live chat support is available during business hours.\n" +
+                            "• You can also call us toll-free at 0800-123-4567.\n\n" +
+
+                            "📌 Tips for Secure Banking:\n" +
+                            "• Always log out after using the app.\n" +
+                            "• Avoid using public Wi-Fi for transactions.\n" +
+                            "• Enable biometric login if available.\n" +
+                            "• Regularly update your password.\n\n" +
+
+                            "💡 Coming Soon:\n" +
+                            "• Budget planner tool\n" +
+                            "• Currency converter\n" +
+                            "• QR payments\n\n" +
+
+                            "📣 Thank you for banking with us. Your security and convenience are our top priority.\n"
+            );
+        } else {
+            System.err.println("Error: helpTextArea is not initialized.");
+        }
     }
 
     //---------------------------------------------------------------------------------------------------------------------------------------------//
@@ -538,122 +614,6 @@ public class ChatBotController {
         });
     }
     //---------------------------------------------------------------------------------------------------------------------------------------------//
-
-
-    @FXML
-    protected void handleAskChatbot(ActionEvent event) {
-        String question = questionField.getText();
-        if (question == null || question.trim().isEmpty()) {
-            addMessageToChat("System", "Please enter a question.", "message-system");
-            return;
-        }
-
-        if (currentUsername == null) {
-            addMessageToChat("System", "User session not found. Please log in again.", "message-system");
-            return;
-        }
-
-        // إضافة سؤال المستخدم لتاريخ المحادثة
-        addMessageToChat("You", question, "message-user");
-        questionField.clear();
-
-        try {
-            // Prompt أولي عشان نحدد إذا كان السؤال متعلق بالداتا بيز أو لا
-            String initialPrompt = "You are a banking assistant. Determine if the following question is related to banking data (e.g., balance, transactions, transfers, or money transfer). " +
-                    "If it is related to banking data, respond with 'BANKING_DATA'. If it is a general question, respond with 'GENERAL'. Question: " + question;
-
-            String questionType = OpenAIChatbot.getChatResponse(initialPrompt).trim();
-
-            if (questionType.equalsIgnoreCase("BANKING_DATA")) {
-                // لو السؤال متعلق بالداتا بيز، نكمل زي ما كنا بنعمل
-                String dataPrompt = "You are a banking assistant with access to a user's account information in a database. " +
-                        "You can retrieve the user's balance, recent transactions, recent transfers, or process a money transfer. " +
-                        "The user has already logged in, so you can access their data using their username: " + currentUsername + ". " +
-                        "Respond to the following question with a keyword or phrase indicating what data to retrieve or action to perform (e.g., 'balance', 'transactions', 'transfers', 'transfer money'). " +
-                        "Do not provide any sensitive information directly. Question: " + question;
-
-                String aiResponse = OpenAIChatbot.getChatResponse(dataPrompt).toLowerCase().trim();
-
-                // معالجة الرد بناءً على نوع السؤال
-                if (aiResponse.contains("balance")) {
-                    double balance = database_BankSystem.getBalance(currentUsername);
-                    if (balance >= 0) {
-                        addMessageToChat("Assistant", "Your current balance is: $" + balance, "message-assistant");
-                    } else {
-                        addMessageToChat("Assistant", "Unable to retrieve your balance at this time. Please try again later.", "message-assistant");
-                    }
-                } else if (aiResponse.contains("transactions")) {
-                    List<database_BankSystem.Transaction> transactions = database_BankSystem.getRecentTransactions(currentUsername, 5);
-                    if (transactions.isEmpty()) {
-                        addMessageToChat("Assistant", "No recent transactions found.", "message-assistant");
-                    } else {
-                        StringBuilder transactionList = new StringBuilder("Your recent transactions:\n");
-                        for (database_BankSystem.Transaction transaction : transactions) {
-                            transactionList.append(transaction.toString()).append("\n");
-                        }
-                        addMessageToChat("Assistant", transactionList.toString(), "message-assistant");
-                    }
-                } else if (aiResponse.contains("transfers")) {
-                    List<database_BankSystem.Transfer> transfers = database_BankSystem.getRecentTransfers(currentUsername, 5);
-                    if (transfers.isEmpty()) {
-                        addMessageToChat("Assistant", "No recent transfers found.", "message-assistant");
-                    } else {
-                        StringBuilder transferList = new StringBuilder("Your recent transfers:\n");
-                        for (database_BankSystem.Transfer transfer : transfers) {
-                            transferList.append(transfer.toString()).append("\n");
-                        }
-                        addMessageToChat("Assistant", transferList.toString(), "message-assistant");
-                    }
-                } else if (aiResponse.contains("transfer money")) {
-                    if (question.toLowerCase().contains("transfer") && question.contains("to")) {
-                        try {
-                            String[] parts = question.split("to");
-                            String amountStr = parts[0].replaceAll("[^0-9.]", "").trim();
-                            String toUsername = parts[1].trim().split(" ")[0];
-                            double amount = Double.parseDouble(amountStr);
-                            boolean success = database_BankSystem.transfer(currentUsername, toUsername, amount);
-                            if (success) {
-                                addMessageToChat("Assistant", "Transfer of $" + amount + " to " + toUsername + " completed successfully!", "message-assistant");
-                            } else {
-                                addMessageToChat("Assistant", "Transfer failed. Please check the username or ensure you have sufficient funds.", "message-assistant");
-                            }
-                        } catch (Exception e) {
-                            addMessageToChat("Assistant", "Error processing transfer. Please use the format 'Transfer 100 to user123'.", "message-assistant");
-                        }
-                    } else {
-                        addMessageToChat("Assistant", "To transfer money, please provide the recipient's username and the amount. For example, 'Transfer 100 to user123'.", "message-assistant");
-                    }
-                } else {
-                    addMessageToChat("Assistant", "Sorry, I didn't understand your banking request. You can ask about your balance, recent transactions, transfers, or transfer money to another user.", "message-assistant");
-                }
-            } else {
-                // لو السؤال عام، نجاوب عليه بشكل مباشر باستخدام OpenAI API
-                String generalPrompt = "You are a helpful assistant. Answer the following question: " + question;
-                String generalResponse = OpenAIChatbot.getChatResponse(generalPrompt);
-                addMessageToChat("Assistant", generalResponse, "message-assistant");
-            }
-        } catch (IOException e) {
-            addMessageToChat("System", "Error communicating with chatbot: " + e.getMessage(), "message-system");
-        }
-    }
-
-    @FXML
-    protected void clearChat(ActionEvent event) {
-        chatHistory.getChildren().clear();
-        addMessageToChat("Assistant", "Chat cleared! How can I assist you now?", "message-assistant");
-    }
-
-    private void addMessageToChat(String sender, String message, String styleClass) {
-        Label messageLabel = new Label(sender + ": " + message);
-        messageLabel.setWrapText(true);
-        messageLabel.getStyleClass().add(styleClass);
-        chatHistory.getChildren().add(messageLabel);
-
-        // Scroll to bottom
-        chatScrollPane.layout();
-        chatScrollPane.setVvalue(1.0);
-    }
-
     @FXML
     protected void ToHome2(MouseEvent event) throws IOException {
         UserSession session = UserSession.getInstance();
@@ -971,6 +931,7 @@ public class ChatBotController {
         stage.centerOnScreen();
         stage.show();
     }
+
     @FXML
     protected void ToHelp(MouseEvent event) throws IOException {
         UserSession session = UserSession.getInstance();
@@ -1016,5 +977,4 @@ public class ChatBotController {
         stage.centerOnScreen();
         stage.show();
     }
-
 }

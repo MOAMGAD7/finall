@@ -7,6 +7,7 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.effect.Glow?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -18,7 +19,7 @@
 <BorderPane style="-fx-background-color: transparent;" stylesheets="@Settings.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.banking.SettingsController">
     <!-- Sidebar -->
     <left>
-        <AnchorPane prefHeight="418.0" prefWidth="220.0" style="-fx-background-color: rgba(0,0,0,0.3); -fx-background-radius: 15px; -fx-padding: 30px;" styleClass="Sidebar" BorderPane.alignment="CENTER">
+        <AnchorPane prefHeight="418.0" prefWidth="220.0" style="-fx-background-color: rgba(50, 50, 50, 0.2); -fx-background-radius: 15px; -fx-padding: 30px;" styleClass="Sidebar" BorderPane.alignment="CENTER">
             <children>
                 <VBox layoutX="14.0" prefHeight="519.0" prefWidth="214.0" spacing="20.0">
                     <children>
@@ -101,7 +102,7 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="213.0" spacing="12" styleClass="menu-item">
                             <FontAwesomeIconView fx:id="helpIcon" fill="WHITE" glyphName="QUESTION_CIRCLE" size="24" />
-                            <Label fx:id="helpLabel" text="Help" textFill="WHITE">
+                            <Label fx:id="helpLabel" onMouseClicked="#ToHelp" text="Help" textFill="WHITE">
                                 <font>
                                     <Font name="System Regular" size="16.0" />
                                 </font>
@@ -114,17 +115,17 @@
                 </VBox>
             </children>
             <BorderPane.margin>
-                <Insets left="15.0" />
+                <Insets bottom="15.0" left="15.0" />
             </BorderPane.margin>
         </AnchorPane>
     </left>
 
     <!-- Top Navigation Bar -->
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 20; -fx-background-color: rgba(0,0,0,0.3); -fx-background-radius: 15px;">
+        <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 20; -fx-background-color: rgba(50, 50, 50, 0.2); -fx-background-radius: 15px;">
             <HBox prefHeight="46.0" prefWidth="206.0">
                 <children>
-                    <FontAwesomeIconView fill="WHITE" glyphName="BANK" size="20" text="" wrappingWidth="13.257135391235352">
+                    <FontAwesomeIconView fill="WHITE" glyphName="BANK" size="20" text=" " wrappingWidth="13.257135391235352">
                         <HBox.margin>
                             <Insets left="5.0" top="9.0" />
                         </HBox.margin>
@@ -139,7 +140,10 @@
                     </Label>
                 </children>
             </HBox>
-            <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Welcome, Eda" textFill="WHITE" />
+            <Label fx:id="AccountUser3" prefHeight="27.0" prefWidth="191.0" style="-fx-font-size: 18px; -fx-font-weight: bold;" textFill="WHITE">
+            <graphic>
+               <Label text="Welcome," />
+            </graphic></Label>
             <Region fx:id="spacer" HBox.hgrow="ALWAYS" />
 
             <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-background-color: rgba(50, 50, 50, 0.2); -fx-background-radius: 25; -fx-padding: 5 15;">
@@ -152,141 +156,168 @@
             <ImageView fitHeight="32" fitWidth="32">
             </ImageView>
             <BorderPane.margin>
-                <Insets bottom="15.0" left="15.0" right="15.0" top="125.0" />
+                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
             </BorderPane.margin>
         </HBox>
     </top>
+
     <!-- Main Content -->
     <center>
-        <VBox alignment="CENTER" maxWidth="400.0" minWidth="282.0" prefHeight="758.0" prefWidth="282.0" spacing="15" style="-fx-background-color: rgba(0, 0, 0, 0.25); -fx-background-radius: 15px; -fx-padding: 25px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 15, 0, 0, 0); -fx-border-color: rgba(255,255,255,0.4); -fx-border-width: 1; -fx-border-radius: 15px;">
+        <HBox alignment="CENTER_LEFT" spacing="20" BorderPane.alignment="CENTER_LEFT">
             <children>
-                <!-- Title with Icon -->
-                <HBox alignment="CENTER" prefHeight="50.0" spacing="10" style="-fx-background-color: transparent; -fx-background-radius: 15px; -fx-padding: 5;">
+                <VBox alignment="CENTER" prefHeight="618.0" prefWidth="474.0" spacing="10" style="-fx-background-color: rgba(50, 50, 50, 0.2); -fx-background-radius: 15px; -fx-padding: 20px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 15, 0, 0, 0); -fx-border-width: 1; -fx-border-radius: 15px;">
                     <children>
-                        <FontAwesomeIconView fill="#00c3ff" glyphName="COG" size="30" text="" wrappingWidth="40.11423683166504">
-                            <HBox.margin>
-                                <Insets right="-20.0" />
-                            </HBox.margin>
-                        </FontAwesomeIconView>
-                        <Label text="Settings" textFill="#ffffff">
-                            <font>
-                                <Font name="System Bold" size="28.0" />
-                            </font>
-                            <effect>
-                                <Glow level="0.6" />
-                            </effect>
-                        </Label>
+                        <!-- Title with Icon -->
+                        <HBox alignment="CENTER" prefHeight="40.0" spacing="10" style="-fx-background-color: transparent; -fx-background-radius: 15px; -fx-padding: 5;">
+                            <children>
+                                <FontAwesomeIconView fill="#00c3ff" glyphName="COG" size="28" text="" wrappingWidth="30.0">
+                                    <HBox.margin>
+                                        <Insets left="2.0" />
+                                    </HBox.margin>
+                                </FontAwesomeIconView>
+                                <Label text="Settings" textFill="#ffffff">
+                                    <font>
+                                        <Font name="System Bold" size="24.0" />
+                                    </font>
+                                    <effect>
+                                        <Glow level="0.6" />
+                                    </effect>
+                                </Label>
+                            </children>
+                            <VBox.margin>
+                                <Insets bottom="10.0" />
+                            </VBox.margin>
+                        </HBox>
+
+                        <!-- Profile Image Section -->
+                        <HBox alignment="CENTER" spacing="10" style="-fx-background-color: transparent; -fx-background-radius: 12px; -fx-padding: 8 12;">
+                            <children>
+                                <ImageView fx:id="profileImage" fitHeight="78.0" fitWidth="107.0">
+                           <HBox.margin>
+                              <Insets right="30.0" />
+                           </HBox.margin></ImageView>
+                                <Button onAction="#changeProfileImage" style="-fx-background-color: linear-gradient(to bottom, #00a2ff, #0066cc); -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold; -fx-background-radius: 22px; -fx-effect: dropshadow(gaussian, rgba(0,140,255,0.8), 12, 0, 0, 0);" text="Change Profile Picture">
+                                    <graphic>
+                                        <FontAwesomeIconView fill="WHITE" glyphName="CAMERA" size="16" />
+                                    </graphic>
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                                </Button>
+                            </children>
+                            <VBox.margin>
+                                <Insets top="5.0" />
+                            </VBox.margin>
+                        </HBox>
+
+                        <!-- User Information Section -->
+                        <!-- Full Name -->
+                        <HBox alignment="CENTER" spacing="8" style="-fx-background-color: transparent; -fx-background-radius: 12px; -fx-padding: 6 10;">
+                            <children>
+                                <FontAwesomeIconView fill="#00ddff" glyphName="USER" size="20" />
+                                <TextField fx:id="fullNameField" editable="false" promptText="Full Name" style="-fx-font-size: 12px; -fx-background-radius: 8px; -fx-background-color: rgba(0,0,0,0.25); -fx-border-color: rgba(0,191,255,0.7); -fx-border-radius: 8px; -fx-border-width: 1.5px; -fx-text-fill: #ffffff; -fx-prompt-text-fill: rgba(255,255,255,0.7); -fx-padding: 6 10;" HBox.hgrow="ALWAYS" />
+                            </children>
+                            <VBox.margin>
+                                <Insets top="5.0" />
+                            </VBox.margin>
+                        </HBox>
+
+                        <!-- Email -->
+                        <HBox alignment="CENTER" spacing="8" style="-fx-background-color: transparent; -fx-background-radius: 12px; -fx-padding: 6 10;">
+                            <children>
+                                <FontAwesomeIconView fill="#00ddff" glyphName="ENVELOPE" size="20" />
+                                <TextField fx:id="emailField" editable="false" promptText="Email" style="-fx-font-size: 12px; -fx-background-radius: 8px; -fx-background-color: rgba(0,0,0,0.25); -fx-border-color: rgba(0,191,255,0.7); -fx-border-radius: 8px; -fx-border-width: 1.5px; -fx-text-fill: #ffffff; -fx-prompt-text-fill: rgba(255,255,255,0.7); -fx-padding: 6 10;" HBox.hgrow="ALWAYS" />
+                            </children>
+                            <VBox.margin>
+                                <Insets top="5.0" />
+                            </VBox.margin>
+                        </HBox>
+
+                        <!-- Phone Number -->
+                        <HBox alignment="CENTER" spacing="8" style="-fx-background-color: transparent; -fx-background-radius: 12px; -fx-padding: 6 10;">
+                            <children>
+                                <FontAwesomeIconView fill="#00ddff" glyphName="PHONE" size="20" />
+                                <TextField fx:id="phoneField" editable="false" promptText="Phone Number" style="-fx-font-size: 12px; -fx-background-radius: 8px; -fx-background-color: rgba(0,0,0,0.25); -fx-border-color: rgba(0,191,255,0.7); -fx-border-radius: 8px; -fx-border-width: 1.5px; -fx-text-fill: #ffffff; -fx-prompt-text-fill: rgba(255,255,255,0.7); -fx-padding: 6 10;" HBox.hgrow="ALWAYS" />
+                            </children>
+                            <VBox.margin>
+                                <Insets top="5.0" />
+                            </VBox.margin>
+                        </HBox>
+
+                        <!-- National ID -->
+                        <HBox alignment="CENTER" spacing="8" style="-fx-background-color: transparent; -fx-background-radius: 12px; -fx-padding: 6 10;">
+                            <children>
+                                <FontAwesomeIconView fill="#00ddff" glyphName="ID_CARD" size="20" />
+                                <TextField fx:id="nationalIdField" editable="false" promptText="National ID" style="-fx-font-size: 12px; -fx-background-radius: 8px; -fx-background-color: rgba(0,0,0,0.25); -fx-border-color: rgba(0,191,255,0.7); -fx-border-radius: 8px; -fx-border-width: 1.5px; -fx-text-fill: #ffffff; -fx-prompt-text-fill: rgba(255,255,255,0.7); -fx-padding: 6 10;" HBox.hgrow="ALWAYS" />
+                            </children>
+                            <VBox.margin>
+                                <Insets top="5.0" />
+                            </VBox.margin>
+                        </HBox>
+
+                        <!-- Balance -->
+                        <HBox alignment="CENTER" spacing="8" style="-fx-background-color: transparent; -fx-background-radius: 12px; -fx-padding: 6 10;">
+                            <children>
+                                <FontAwesomeIconView fill="#00ddff" glyphName="MONEY" size="20" />
+                                <TextField fx:id="balanceField" editable="false" promptText="Balance" style="-fx-font-size: 12px; -fx-background-radius: 8px; -fx-background-color: rgba(0,0,0,0.25); -fx-border-color: rgba(0,191,255,0.7); -fx-border-radius: 8px; -fx-border-width: 1.5px; -fx-text-fill: #ffffff; -fx-prompt-text-fill: rgba(255,255,255,0.7); -fx-padding: 6 10;" HBox.hgrow="ALWAYS" />
+                            </children>
+                            <VBox.margin>
+                                <Insets top="5.0" />
+                            </VBox.margin>
+                        </HBox>
+
+                        <!-- Action Buttons -->
+                        <HBox alignment="CENTER" spacing="50.0" style="-fx-background-color: transparent; -fx-background-radius: 12px; -fx-padding: 8 12;">
+                            <children>
+                                <Button fx:id="editButton" onAction="#enableEditing" prefHeight="26.0" prefWidth="94.0" style="-fx-background-color: linear-gradient(to bottom, #00a2ff, #0066cc); -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold; -fx-background-radius: 20px; -fx-effect: dropshadow(gaussian, rgba(0,140,255,0.8), 12, 0, 0, 0);" text="Edit">
+                                    <graphic>
+                                        <FontAwesomeIconView fill="WHITE" glyphName="EDIT" size="16" />
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="saveButton" disable="true" onAction="#saveChanges" prefHeight="26.0" prefWidth="111.0" style="-fx-background-color: linear-gradient(to bottom, #00a2ff, #0066cc); -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold; -fx-background-radius: 20px; -fx-effect: dropshadow(gaussian, rgba(0,140,255,0.8), 12, 0, 0, 0);" text="Save Changes">
+                                    <graphic>
+                                        <FontAwesomeIconView fill="WHITE" glyphName="SAVE" size="16" />
+                                    </graphic>
+                                </Button>
+                            </children>
+                            <VBox.margin>
+                                <Insets top="10.0" />
+                            </VBox.margin>
+                        </HBox>
+
+                        <!-- Logout Button -->
+                        <HBox alignment="CENTER" spacing="10" style="-fx-background-color: transparent; -fx-background-radius: 12px; -fx-padding: 8 12;">
+                            <children>
+                                <Button fx:id="logoutButton1" onAction="#handleLogout" prefHeight="26.0" prefWidth="122.0" style="-fx-background-color: linear-gradient(to bottom, #00a2ff, #0066cc); -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold; -fx-background-radius: 20px; -fx-effect: dropshadow(gaussian, rgba(0,140,255,0.8), 12, 0, 0, 0);" text="Logout">
+                                    <graphic>
+                                        <FontAwesomeIconView fill="WHITE" glyphName="SIGN_OUT" size="16" />
+                                    </graphic>
+                           <HBox.margin>
+                              <Insets right="40.0" />
+                           </HBox.margin>
+                                </Button>
+                            </children>
+                            <VBox.margin>
+                                <Insets top="10.0" />
+                            </VBox.margin>
+                        </HBox>
                     </children>
-                    <VBox.margin>
-                        <Insets bottom="10.0" />
-                    </VBox.margin>
-                </HBox>
-
-                <!-- Profile Image Section -->
-                <HBox alignment="CENTER" spacing="10" style="-fx-background-color: transparent; -fx-background-radius: 12px; -fx-padding: 8 12;">
-                    <children>
-                        <ImageView fx:id="profileImage" fitHeight="100" fitWidth="100" />
-                        <Button onAction="#changeProfileImage" style="-fx-background-color: linear-gradient(to bottom, #00a2ff, #0066cc); -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 22px; -fx-effect: dropshadow(gaussian, rgba(0,140,255,0.8), 12, 0, 0, 0);" text="Change Profile Picture">
-                            <graphic>
-                                <FontAwesomeIconView fill="WHITE" glyphName="CAMERA" size="18" />
-                            </graphic>
-                        </Button>
-                    </children>
-                    <VBox.margin>
-                        <Insets top="5.0" />
-                    </VBox.margin>
-                </HBox>
-
-                <!-- User Information Section -->
-                <!-- Full Name -->
-                <HBox alignment="CENTER" spacing="10" style="-fx-background-color: transparent; -fx-background-radius: 12px; -fx-padding: 8 12;">
-                    <children>
-                        <FontAwesomeIconView fill="#00ddff" glyphName="USER" size="26" />
-                        <TextField fx:id="fullNameField" editable="false" promptText="Full Name" style="-fx-font-size: 14px; -fx-background-radius: 10px; -fx-background-color: rgba(0,0,0,0.25); -fx-border-color: rgba(0,191,255,0.7); -fx-border-radius: 10px; -fx-border-width: 1.5px; -fx-text-fill: #ffffff; -fx-prompt-text-fill: rgba(255,255,255,0.7); -fx-padding: 8 12;" HBox.hgrow="ALWAYS" />
-                    </children>
-                    <VBox.margin>
-                        <Insets top="5.0" />
-                    </VBox.margin>
-                </HBox>
-
-                <!-- Email -->
-                <HBox alignment="CENTER" spacing="10" style="-fx-background-color: transparent; -fx-background-radius: 12px; -fx-padding: 8 12;">
-                    <children>
-                        <FontAwesomeIconView fill="#00ddff" glyphName="ENVELOPE" size="26" />
-                        <TextField fx:id="emailField" editable="false" promptText="Email" style="-fx-font-size: 14px; -fx-background-radius: 10px; -fx-background-color: rgba(0,0,0,0.25); -fx-border-color: rgba(0,191,255,0.7); -fx-border-radius: 10px; -fx-border-width: 1.5px; -fx-text-fill: #ffffff; -fx-prompt-text-fill: rgba(255,255,255,0.7); -fx-padding: 8 12;" HBox.hgrow="ALWAYS" />
-                    </children>
-                    <VBox.margin>
-                        <Insets top="5.0" />
-                    </VBox.margin>
-                </HBox>
-
-                <!-- Phone Number -->
-                <HBox alignment="CENTER" spacing="10" style="-fx-background-color: transparent; -fx-background-radius: 12px; -fx-padding: 8 12;">
-                    <children>
-                        <FontAwesomeIconView fill="#00ddff" glyphName="PHONE" size="26" />
-                        <TextField fx:id="phoneField" editable="false" promptText="Phone Number" style="-fx-font-size: 14px; -fx-background-radius: 10px; -fx-background-color: rgba(0,0,0,0.25); -fx-border-color: rgba(0,191,255,0.7); -fx-border-radius: 10px; -fx-border-width: 1.5px; -fx-text-fill: #ffffff; -fx-prompt-text-fill: rgba(255,255,255,0.7); -fx-padding: 8 12;" HBox.hgrow="ALWAYS" />
-                    </children>
-                    <VBox.margin>
-                        <Insets top="5.0" />
-                    </VBox.margin>
-                </HBox>
-
-                <!-- National ID -->
-                <HBox alignment="CENTER" spacing="10" style="-fx-background-color: transparent; -fx-background-radius: 12px; -fx-padding: 8 12;">
-                    <children>
-                        <FontAwesomeIconView fill="#00ddff" glyphName="ID_CARD" size="26" />
-                        <TextField fx:id="nationalIdField" editable="false" promptText="National ID" style="-fx-font-size: 14px; -fx-background-radius: 10px; -fx-background-color: rgba(0,0,0,0.25); -fx-border-color: rgba(0,191,255,0.7); -fx-border-radius: 10px; -fx-border-width: 1.5px; -fx-text-fill: #ffffff; -fx-prompt-text-fill: rgba(255,255,255,0.7); -fx-padding: 8 12;" HBox.hgrow="ALWAYS" />
-                    </children>
-                    <VBox.margin>
-                        <Insets top="5.0" />
-                    </VBox.margin>
-                </HBox>
-
-                <!-- Balance -->
-                <HBox alignment="CENTER" spacing="10" style="-fx-background-color: transparent; -fx-background-radius: 12px; -fx-padding: 8 12;">
-                    <children>
-                        <FontAwesomeIconView fill="#00ddff" glyphName="MONEY" size="26" />
-                        <TextField fx:id="balanceField" editable="false" promptText="Balance" style="-fx-font-size: 14px; -fx-background-radius: 10px; -fx-background-color: rgba(0,0,0,0.25); -fx-border-color: rgba(0,191,255,0.7); -fx-border-radius: 10px; -fx-border-width: 1.5px; -fx-text-fill: #ffffff; -fx-prompt-text-fill: rgba(255,255,255,0.7); -fx-padding: 8 12;" HBox.hgrow="ALWAYS" />
-                    </children>
-                    <VBox.margin>
-                        <Insets top="5.0" />
-                    </VBox.margin>
-                </HBox>
-
-                <!-- Action Buttons -->
-                <HBox alignment="CENTER" spacing="10" style="-fx-background-color: transparent; -fx-background-radius: 12px; -fx-padding: 8 12;">
-                    <children>
-                        <Button fx:id="editButton" onAction="#enableEditing" style="-fx-background-color: linear-gradient(to bottom, #00a2ff, #0066cc); -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 22px; -fx-effect: dropshadow(gaussian, rgba(0,140,255,0.8), 12, 0, 0, 0);" text="Edit">
-                            <graphic>
-                                <FontAwesomeIconView fill="WHITE" glyphName="EDIT" size="18" />
-                            </graphic>
-                        </Button>
-                        <Button fx:id="saveButton" disable="true" onAction="#saveChanges" style="-fx-background-color: linear-gradient(to bottom, #00a2ff, #0066cc); -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 22px; -fx-effect: dropshadow(gaussian, rgba(0,140,255,0.8), 12, 0, 0, 0);" text="Save Changes">
-                            <graphic>
-                                <FontAwesomeIconView fill="WHITE" glyphName="SAVE" size="18" />
-                            </graphic>
-                        </Button>
-                    </children>
-                    <VBox.margin>
-                        <Insets top="10.0" />
-                    </VBox.margin>
-                </HBox>
-
-                <!-- Toggle Theme Button -->
-
-            <HBox alignment="CENTER" layoutX="36.0" layoutY="635.0" spacing="10" style="-fx-background-color: transparent; -fx-background-radius: 12px; -fx-padding: 8 12;">
-               <children>
-                  <Button fx:id="logoutButton1" onAction="#handleLogout" prefHeight="30.0" prefWidth="121.0" style="-fx-background-color: linear-gradient(to bottom, #00a2ff, #0066cc); -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 22px; -fx-effect: dropshadow(gaussian, rgba(0,140,255,0.8), 12, 0, 0, 0);" text="Logout">
-                     <graphic>
-                        <FontAwesomeIconView fill="WHITE" glyphName="SIGN_OUT" size="18" />
-                     </graphic>
-                  </Button>
-               </children>
-            </HBox>
+               <HBox.margin>
+                  <Insets left="70.0" />
+               </HBox.margin>
+                </VBox>
+                <ImageView fitHeight="401.0" fitWidth="440.0" preserveRatio="true">
+                    <HBox.margin>
+                        <Insets left="80.0" />
+                    </HBox.margin>
+               <image>
+                  <Image url="@../../../images/Settings.gif" />
+               </image>
+                </ImageView>
             </children>
-         <BorderPane.margin>
-            <Insets bottom="50.0" />
-         </BorderPane.margin>
-        </VBox>
+            <BorderPane.margin>
+                <Insets bottom="65.0" left="20.0" />
+            </BorderPane.margin>
+        </HBox>
     </center>
 </BorderPane>

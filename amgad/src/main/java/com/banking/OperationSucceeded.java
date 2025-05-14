@@ -245,20 +245,18 @@ public class OperationSucceeded implements Initializable {
         }
     }
 
-    public void Clicking6(ActionEvent actionEvent) throws IOException {
-        // Load the FXML for Payment page
+    public void Clicking6(ActionEvent event) throws IOException {
+        // تحميل الصفحة (FXML)
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/maged/Payment.fxml"));
         Parent root = fxmlLoader.load();
-        Payment payment=fxmlLoader.getController();
-        payment.addHistory(sri1,sri2,sri3);
-        payment.setColors();
-        // Loads the FXML file
-        Stage stage = new Stage();
-        stage.setTitle("Operation Succeeded");
 
-        // Add background styling
-        // Load background image
-        Image backgroundImage;
+        // الحصول على الكنترولر وإرسال البيانات وتنفيذ تنسيق
+        Payment paymentController = fxmlLoader.getController();
+        paymentController.addHistory(sri1, sri2, sri3);
+        paymentController.setColors();
+
+        // تحميل صورة الخلفية
+        Image backgroundImage = null;
         try {
             backgroundImage = new Image(getClass().getResourceAsStream("/back.jpg"));
             if (backgroundImage.isError()) {
@@ -267,27 +265,23 @@ public class OperationSucceeded implements Initializable {
             }
         } catch (Exception e) {
             System.err.println("Failed to load background image: " + e.getMessage());
-            backgroundImage = null;
         }
 
-        // Get screen dimensions
+        // الحصول على أبعاد الشاشة
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         double screenWidth = screenBounds.getWidth();
         double screenHeight = screenBounds.getHeight();
 
-        // Create stack pane for layering content
+        // إعداد عناصر التصميم داخل StackPane
         StackPane stackPane = new StackPane();
 
-        // Add background and overlay if image loaded successfully
         if (backgroundImage != null) {
             ImageView backgroundView = new ImageView(backgroundImage);
-            // Fit background to screen
             backgroundView.setFitWidth(screenWidth);
             backgroundView.setFitHeight(screenHeight);
             backgroundView.setPreserveRatio(false);
             backgroundView.setEffect(new GaussianBlur(20));
 
-            // Create a transparent blue overlay
             Region blueOverlay = new Region();
             blueOverlay.setBackground(new Background(new BackgroundFill(
                     Color.rgb(0, 120, 255, 0.2),
@@ -297,10 +291,9 @@ public class OperationSucceeded implements Initializable {
             blueOverlay.setEffect(new GaussianBlur(20));
             blueOverlay.setPrefSize(screenWidth, screenHeight);
 
-            // Add background and overlay to stack
             stackPane.getChildren().addAll(backgroundView, blueOverlay);
         } else {
-            // Create a fallback blue gradient background if image failed to load
+            // خلفية احتياطية
             Region fallbackBackground = new Region();
             fallbackBackground.setBackground(new Background(new BackgroundFill(
                     Color.rgb(10, 60, 120, 1.0),
@@ -311,15 +304,21 @@ public class OperationSucceeded implements Initializable {
             stackPane.getChildren().add(fallbackBackground);
         }
 
-        // Add the UI content on top
+        // إضافة واجهة Payment فوق الخلفية
         stackPane.getChildren().add(root);
 
-        // Create the scene
-        Scene scene = new Scene(stackPane, 1200, 700);
-        stage.setScene(scene);
-        stage.setResizable(false);  // Optional: you can set it to false if you don't want resizing
-        stage.show();  // Show the new stage
+        // إنشاء المشهد الجديد
+        Scene scene = new Scene(stackPane);
+        scene.getStylesheets().clear();
 
-        ((Stage) ((Node) actionEvent.getSource()).getScene().getWindow()).close();
+        // استبدال المشهد الحالي في نفس الـ Stage (نفس النافذة)
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.setTitle("Payment");
+        stage.setWidth(1550);
+        stage.setHeight(840);
+        stage.centerOnScreen();
+        stage.show();
     }
 }
+

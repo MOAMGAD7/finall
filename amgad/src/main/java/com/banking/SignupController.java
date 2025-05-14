@@ -202,7 +202,8 @@ public class SignupController {
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 stage.setScene(scene);
                 stage.setTitle("VERIFY");
-                stage.setFullScreen(true);
+                stage.setWidth(1550);
+                stage.setHeight(840);
                 stage.centerOnScreen();
                 stage.show();
 

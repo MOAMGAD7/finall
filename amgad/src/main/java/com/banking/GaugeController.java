@@ -1222,6 +1222,52 @@ public class GaugeController {
         stage.show();
     }
 
+    @FXML
+    protected void ToHelp(MouseEvent event) throws IOException {
+        UserSession session = UserSession.getInstance();
+        Parent root = FXMLLoader.load(getClass().getResource("/com/example/maged/Help.fxml"));
+        Image backgroundImage = new Image(getClass().getResourceAsStream("/back.jpg"));
+        ImageView backgroundView = new ImageView(backgroundImage);
+
+        // الحصول على حجم الشاشة
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        double screenWidth = screenBounds.getWidth();
+        double screenHeight = screenBounds.getHeight();
+
+        // إعداد الخلفية
+        backgroundView.setFitWidth(screenWidth);
+        backgroundView.setFitHeight(screenHeight);
+        backgroundView.setPreserveRatio(false);
+        backgroundView.setEffect(new GaussianBlur(20));
+
+        // طبقة شفافة زرقاء
+        Region blueOverlay = new Region();
+        blueOverlay.setBackground(new Background(new BackgroundFill(
+                Color.rgb(0, 120, 255, 0.2),
+                CornerRadii.EMPTY,
+                Insets.EMPTY
+        )));
+        blueOverlay.setEffect(new GaussianBlur(20));
+        blueOverlay.setPrefSize(screenWidth, screenHeight);
+
+        // تجميع في StackPane
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().addAll(backgroundView, blueOverlay, root);
+
+        // إنشاء المشهد
+        Scene scene = new Scene(stackPane);
+        scene.getStylesheets().clear();
+
+        // الحصول على الـ stage الحالي
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.setTitle("FindUs");
+        stage.setWidth(1550);
+        stage.setHeight(840);
+        stage.centerOnScreen();
+        stage.show();
+    }
+
 
 
 

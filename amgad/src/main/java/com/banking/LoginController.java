@@ -90,7 +90,7 @@ public class LoginController {
             // رسالة نجاح تسجيل الدخول
             errorLabel.setText("Login successful! Redirecting to Dashboard...");
 
-            // الانتقال إلى صفحة الـ Dashboard
+            // الانتقال إلى صفحة الـ Home2
             Parent root = FXMLLoader.load(getClass().getResource("/com/example/maged/Home2.fxml"));
             Image backgroundImage = new Image(getClass().getResourceAsStream("/back.jpg"));
             ImageView backgroundView = new ImageView(backgroundImage);
