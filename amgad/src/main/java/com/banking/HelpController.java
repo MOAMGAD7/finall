@@ -96,6 +96,7 @@ public class HelpController {
     @FXML
     private Label AccountUser6;
 
+    @FXML private ImageView HomeImage;
 
     @FXML
     public void initialize() {
@@ -103,6 +104,14 @@ public class HelpController {
         UserSession session = UserSession.getInstance();
         String username = session.getUsername();
         AccountUser6.setText(username);
+
+        database_BankSystem.UserDetails userDetails = database_BankSystem.getUserDetails(username);
+        String imagePath = userDetails.getProfileImage();
+        if (imagePath != null && !imagePath.isEmpty()) {
+            HomeImage.setImage(new Image("file:" + imagePath));
+        }
+
+
 
         //-------------------------------------------------------------------------------------------------------------------------------------------//
         //sidebar

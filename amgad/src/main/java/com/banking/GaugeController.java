@@ -41,6 +41,8 @@ import javafx.scene.transform.Translate;
 import javafx.scene.image.ImageView;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class GaugeController {
@@ -144,18 +146,35 @@ public class GaugeController {
         String username = session.getUsername();
         AccountUser1.setText(username);
 
-        // Fetch user ID for database queries (غير ضروري هنا، لكن هنتركه للحفاظ على المنطق)
+        // Fetch user ID for database queries
         int userId = database_BankSystem.getUserId(username);
 
-        // تعليق: إزالة الاعتماد على قاعدة البيانات لجلب بيانات Progress Bars
-        // بدلاً من ذلك، استخدام قيم وهمية ثابتة
-        double withdrawalPercentage = 70.0; // قيمة وهمية للـ Withdrawals
-        double paymentPercentage = 50.0;   // قيمة وهمية للـ Payments
-        double depositPercentage = 80.0;   // قيمة وهمية للـ Deposits
+        // Fetch total balance from database
+        double totalBalance = database_BankSystem.getTotalBalance(username);
+
+        // Generate random values for Withdrawals and Deposits
+        double totalWithdrawals = rand.nextDouble() * totalBalance * 0.3; // قيمة عشوائية بين 0 و30% من totalBalance
+        double totalDeposits = rand.nextDouble() * totalBalance;   // قيمة عشوائية بين 0 وtotalBalance
+
+        // Calculate Earning as a value (15% of totalBalance)
+        double earningValue = totalBalance * (15.0 / 100); // الربح (15% من الرصيد)
+
+        // Calculate percentages based on total balance with validation
+        double withdrawalPercentage = (totalBalance > 0) ? (totalWithdrawals / totalBalance) * 100 : 0.0;
+        double earningPercentage = (totalBalance > 0) ? (earningValue / totalBalance) * 100 : 0.0;
+        double depositPercentage = (totalBalance > 0) ? (totalDeposits / totalBalance) * 100 : 0.0;
+
+        System.out.println("Total Balance: " + totalBalance);
+        System.out.println("Random Withdrawals (Reduced): " + totalWithdrawals);
+        System.out.println("Random Deposits: " + totalDeposits);
+        System.out.println("Earning Value (15% of Total Balance): " + earningValue);
+        System.out.println("Withdrawal Percentage: " + withdrawalPercentage + "%");
+        System.out.println("Earning Percentage: " + earningPercentage + "%");
+        System.out.println("Deposit Percentage: " + depositPercentage + "%");
 
         // Set progress bar targets
         progressBar1.setTarget(withdrawalPercentage);
-        progressBar2.setTarget(paymentPercentage);
+        progressBar2.setTarget(earningPercentage);
         progressBar3.setTarget(depositPercentage);
 
         // Add hover effect to restart animation
@@ -163,19 +182,12 @@ public class GaugeController {
         progressBar2.setOnMouseClicked(event -> restartProgressBarAnimation(progressBar2));
         progressBar3.setOnMouseClicked(event -> restartProgressBarAnimation(progressBar3));
 
-        // Apply LinearGradient colors to progress arcs
-        LinearGradient gradient1 = new LinearGradient(0, 0, 1, 0, true, javafx.scene.paint.CycleMethod.NO_CYCLE,
-                new Stop(0, Color.web("#ff7e5f")), new Stop(1, Color.web("#feb47b")));
-        LinearGradient gradient2 = new LinearGradient(0, 0, 1, 0, true, javafx.scene.paint.CycleMethod.NO_CYCLE,
-                new Stop(0, Color.web("#6a11cb")), new Stop(1, Color.web("#2575fc")));
-        LinearGradient gradient3 = new LinearGradient(0, 0, 1, 0, true, javafx.scene.paint.CycleMethod.NO_CYCLE,
-                new Stop(0, Color.web("#00c6ff")), new Stop(1, Color.web("#0072ff")));
+        // Apply dynamic colors based on percentage values
+        progressBar1.getProgressArc().setStroke(getColorBasedOnValue(withdrawalPercentage));
+        progressBar2.getProgressArc().setStroke(getColorBasedOnValue(earningPercentage));
+        progressBar3.getProgressArc().setStroke(getColorBasedOnValue(depositPercentage));
 
-        progressBar1.getProgressArc().setStroke(gradient1);
-        progressBar2.getProgressArc().setStroke(gradient2);
-        progressBar3.getProgressArc().setStroke(gradient3);
-
-        // Fetch payment data from database (لم يتم تغييره لأنه ليس جزءًا من Progress Bars)
+        // Fetch payment data from database
         List<Object[]> categoryData = database_BankSystem.getPaymentTotalsByCategory(userId);
 
         // Add data to Donut Chart with custom colors
@@ -190,7 +202,6 @@ public class GaugeController {
                 PieChart.Data pieData = new PieChart.Data(category + " (" + String.format("%.1f%%", percentage) + ")", percentage);
                 donutChart.getData().add(pieData);
 
-                // Find the index of the category to apply the correct color
                 int colorIndex = -1;
                 for (int i = 0; i < categories.length; i++) {
                     if (categories[i].equals(category)) {
@@ -202,7 +213,6 @@ public class GaugeController {
                     pieData.getNode().setStyle("-fx-pie-color: " + colors[colorIndex] + ";");
                 }
 
-                // Add interactive effect
                 pieData.getNode().setOnMouseEntered(event -> {
                     Scale scale = new Scale(1.1, 1.1, 0, 0);
                     pieData.getNode().getTransforms().setAll(scale);
@@ -220,7 +230,6 @@ public class GaugeController {
                 });
             }
         } else {
-            // Add placeholder data if no payments are found
             PieChart.Data data = new PieChart.Data("No Payments (0%)", 100);
             donutChart.getData().add(data);
             data.getNode().setStyle("-fx-pie-color: #6C757D;");
@@ -291,9 +300,9 @@ public class GaugeController {
             legendVBox.getChildren().add(legendItem);
         }
 
-        // Add typing effects for progress bars (مع القيم الوهمية)
+        // Add typing effects for progress bars
         addTypingEffect(progressBar1, String.format("Withdrawals for this month: %.1f%%", withdrawalPercentage));
-        addTypingEffect(progressBar2, String.format("Payments for this month: %.1f%%", paymentPercentage));
+        addTypingEffect(progressBar2, String.format("Earning for this month: %.1f USD", earningValue));
         addTypingEffect(progressBar3, String.format("Deposits for this month: %.1f%%", depositPercentage));
 
         // Configure Line Chart
@@ -322,7 +331,7 @@ public class GaugeController {
         NumberAxis yAxis = new NumberAxis(10, 100, 2);
 
         LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
-        lineChart.setTitle("Line Chart واضح");
+        lineChart.setTitle("Line Chart ");
         lineChart.setAnimated(false);
 
         series1.setName("Dollar");
@@ -364,8 +373,23 @@ public class GaugeController {
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
 
-        // Bar Chart using database data (لم يتم تغييره لأنه ليس جزءًا من Progress Bars)
+        // Fetch total balance for Bar Chart percentage calculation
+        double totalBalanceForChart = database_BankSystem.getTotalBalance(username);
+        if (totalBalanceForChart <= 0) {
+            totalBalanceForChart = 1.0; // Avoid division by zero
+        }
+        System.out.println("Total Balance for Chart: " + totalBalanceForChart);
+
+        // Bar Chart using database data with percentage of daily transactions relative to total balance
         List<Object[]> dailyData = database_BankSystem.getDailyTransactions(username);
+
+        // Current date (12:00 AM EEST on Friday, May 16, 2025)
+        LocalDate today = LocalDate.of(2025, 5, 16);
+        LocalDate startDate = today.minusDays(6); // Start of the week (Saturday, May 10, 2025)
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("EEEE", new Locale("en"));
+
         Paint[] fillGradients = {
                 new LinearGradient(0, 0, 1, 0, true, javafx.scene.paint.CycleMethod.NO_CYCLE,
                         new Stop(0, Color.web("#ff7e5f")), new Stop(1, Color.web("#feb47b"))),
@@ -384,11 +408,11 @@ public class GaugeController {
         };
 
         double chartHeight = 300;
-        double maxValue = 200;
 
         Pane axisPane = new Pane();
         axisPane.setPrefSize(800, chartHeight);
 
+        // Add grid lines and percentage labels
         for (int i = 0; i <= 5; i++) {
             double y = chartHeight - i * (chartHeight / 5) + 0;
             Line gridLine = new Line(50, y, 600, y);
@@ -407,76 +431,54 @@ public class GaugeController {
         Line xAxisLine = new Line(50, chartHeight + 0, 600, chartHeight + 0);
         xAxisLine.setStroke(Color.GRAY);
         xAxisLine.setStrokeWidth(2);
-        axisPane.getChildren().add(xAxis);
+        axisPane.getChildren().add(xAxisLine);
 
         HBox bars = new HBox(30);
         bars.setAlignment(Pos.BOTTOM_LEFT);
         bars.setPadding(new Insets(0, 0, 0, 70));
 
-        if (!dailyData.isEmpty()) {
-            for (int i = 0; i < dailyData.size(); i++) {
-                String day = (String) dailyData.get(i)[0];
-                double value = (Double) dailyData.get(i)[1];
-                double fillHeight = (value / maxValue) * chartHeight;
+        Map<String, Double> dayTotals = new HashMap<>();
+        for (Object[] data : dailyData) {
+            String dateStr = (String) data[2];
+            LocalDate date = LocalDate.parse(dateStr, formatter);
+            String dayName = date.format(dayFormatter);
+            double transactionValue = (Double) data[1];
+            dayTotals.put(dayName, dayTotals.getOrDefault(dayName, 0.0) + transactionValue);
+        }
 
-                Rectangle base = new Rectangle(40, chartHeight);
-                base.setArcWidth(10);
-                base.setArcHeight(10);
-                base.setFill(Color.LIGHTGRAY);
+        for (int i = 0; i < 7; i++) {
+            LocalDate currentDate = startDate.plusDays(i);
+            String dayName = currentDate.format(dayFormatter);
+            double dailySpending = dayTotals.getOrDefault(dayName, 0.0);
+            double percentage = (totalBalanceForChart > 0) ? Math.min(100.0, (dailySpending / totalBalanceForChart) * 100) : 0.0;
+            System.out.println("Day: " + dayName + ", Daily Spending: " + dailySpending + ", Percentage: " + percentage + "%");
+            double fillHeight = Math.min(chartHeight, (percentage / 100) * chartHeight);
 
-                Rectangle fill = new Rectangle(40, fillHeight);
-                fill.setArcWidth(10);
-                fill.setArcHeight(10);
-                fill.setFill(fillGradients[i % fillGradients.length]);
+            Rectangle base = new Rectangle(40, chartHeight);
+            base.setArcWidth(10);
+            base.setArcHeight(10);
+            base.setFill(Color.LIGHTGRAY);
 
-                StackPane bar = new StackPane(base, fill);
-                bar.setAlignment(Pos.BOTTOM_CENTER);
+            Rectangle fill = new Rectangle(40, fillHeight);
+            fill.setArcWidth(10);
+            fill.setArcHeight(10);
+            fill.setFill(fillGradients[i % fillGradients.length]);
 
-                Tooltip tooltip = new Tooltip(String.format("%.2f", value));
-                bar.getProperties().put("storedTooltip", tooltip);
-                Tooltip.install(bar, tooltip);
+            StackPane bar = new StackPane(base, fill);
+            bar.setAlignment(Pos.BOTTOM_CENTER);
 
-                Text dayLabel = new Text(day);
-                dayLabel.setFill(Color.LIGHTGRAY);
-                dayLabel.setFont(Font.font(13));
+            Tooltip tooltip = new Tooltip(String.format("%.1f%%", percentage));
+            bar.getProperties().put("storedTooltip", tooltip);
+            Tooltip.install(bar, tooltip);
 
-                VBox column = new VBox(5, bar, dayLabel);
-                column.setAlignment(Pos.BOTTOM_CENTER);
+            Text dayLabel = new Text(dayName);
+            dayLabel.setFill(Color.LIGHTGRAY);
+            dayLabel.setFont(Font.font(13));
 
-                bars.getChildren().add(column);
-            }
-        } else {
-            // Placeholder if no data
-            for (int i = 0; i < 7; i++) {
-                double value = 0;
-                double fillHeight = (value / maxValue) * chartHeight;
+            VBox column = new VBox(5, bar, dayLabel);
+            column.setAlignment(Pos.BOTTOM_CENTER);
 
-                Rectangle base = new Rectangle(40, chartHeight);
-                base.setArcWidth(10);
-                base.setArcHeight(10);
-                base.setFill(Color.LIGHTGRAY);
-
-                Rectangle fill = new Rectangle(40, fillHeight);
-                fill.setArcWidth(10);
-                fill.setArcHeight(10);
-                fill.setFill(fillGradients[i % fillGradients.length]);
-
-                StackPane bar = new StackPane(base, fill);
-                bar.setAlignment(Pos.BOTTOM_CENTER);
-
-                Tooltip tooltip = new Tooltip("0.00");
-                bar.getProperties().put("storedTooltip", tooltip);
-                Tooltip.install(bar, tooltip);
-
-                Text dayLabel = new Text("Day " + (i + 1));
-                dayLabel.setFill(Color.LIGHTGRAY);
-                dayLabel.setFont(Font.font(13));
-
-                VBox column = new VBox(5, bar, dayLabel);
-                column.setAlignment(Pos.BOTTOM_CENTER);
-
-                bars.getChildren().add(column);
-            }
+            bars.getChildren().add(column);
         }
 
         chart.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -506,11 +508,23 @@ public class GaugeController {
         } else {
             System.out.println("Warning: bellIcon is null");
         }
-        // GIF animation
         if (homeGif != null) {
             setupGifAnimation(homeGif);
         } else {
             System.out.println("Warning: homeGif is null");
+        }
+    }
+
+    private Paint getColorBasedOnValue(double percentage) {
+        if (percentage < 20) {
+            return new LinearGradient(0, 0, 1, 0, true, javafx.scene.paint.CycleMethod.NO_CYCLE,
+                    new Stop(0, Color.web("#ff0000")), new Stop(1, Color.web("#ff6666")));
+        } else if (percentage < 50) {
+            return new LinearGradient(0, 0, 1, 0, true, javafx.scene.paint.CycleMethod.NO_CYCLE,
+                    new Stop(0, Color.web("#ff7e5f")), new Stop(1, Color.web("#feb47b")));
+        } else {
+            return new LinearGradient(0, 0, 1, 0, true, javafx.scene.paint.CycleMethod.NO_CYCLE,
+                    new Stop(0, Color.web("#43e97b")), new Stop(1, Color.web("#38f9d7")));
         }
     }
 
@@ -603,7 +617,6 @@ public class GaugeController {
         index++;
     }
 
-    // Sidebar animation methods (unchanged)
     private void setupHomeAnimation(FontAwesomeIconView icon, Label label) {
         if (icon == null || label == null) {
             System.out.println("Warning: homeIcon or homeLabel is null");
@@ -988,7 +1001,6 @@ public class GaugeController {
         });
     }
 
-    // Navigation methods (unchanged)
     @FXML
     protected void ToHome2(MouseEvent event) throws IOException {
         UserSession session = UserSession.getInstance();

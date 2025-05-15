@@ -54,11 +54,25 @@ public class Account {
     @FXML
     private VBox cardInputBox;
 
-    private int cardCount = 0;
+    UserSession userSession= UserSession.getInstance();
+    private int cardCount = database_BankSystem.getUserCardCount (userSession.getUsername());
     private final int maxCards = 4;
 
     @FXML
     private VBox transactionList;
+
+    @FXML
+    public Label AcTotBl;
+    public Label AcInc;
+    public Label AcExp;
+    public Label cardbalance;
+
+    private Image cardImage;
+    private String name;
+    private String number;
+    private String type;
+    private String amountValue;
+
 
     //------------------------------------------------------------------------------------------------------------------------------------------//
     //sidebar
@@ -116,16 +130,32 @@ public class Account {
 
     @FXML
     private ImageView homeGif;
+
+    @FXML
+    private ImageView HomeImage1;
     //-------------------------------------------------------------------------------------------------------------//
 
     @FXML
     public void initialize() {
 
         //Data Base
-        UserSession session = UserSession.getInstance();
-        String username = session.getUsername();
+        UserSession userSession = UserSession.getInstance();
+        String username = userSession.getUsername();
         AccountUser.setText(username);
 
+        database_BankSystem.UserDetails userDetails = database_BankSystem.getUserDetails(username);
+        String imagePath = userDetails.getProfileImage();
+        if (imagePath != null && !imagePath.isEmpty()) {
+            HomeImage1.setImage(new Image("file:" + imagePath));
+        }
+
+        System.out.println(cardCount);
+        updateTotalBalanceDisplay();
+        int tempcount=0;
+
+
+        // Update income and expense labels
+        updateIncomeExpenseLabels();
         Object[][] transactions = {
                 {"Ahmed", "Received", "+$120", "/s1.png", Color.LIMEGREEN},
                 {"Laila", "Shopping", "-$60", "/s2.png", Color.RED},
@@ -175,7 +205,7 @@ public class Account {
         // اجعل خلفية الرسم البياني الشفافة
         barChart.setLegendVisible(false);
         barChart.lookup(".chart-plot-background").setStyle("-fx-background-color: transparent;");
-// تغيير لون عنوان الرسم
+        // تغيير لون عنوان الرسم
         Node chartTitle = barChart.lookup(".chart-title");
         if (chartTitle != null) {
             chartTitle.setStyle("-fx-text-fill: white;");
@@ -184,14 +214,54 @@ public class Account {
         cardInputBox.setVisible(false);
         cardInputBox.setManaged(false);
 
-        // Add default card
-        Image img = new Image(getClass().getResourceAsStream("/s2.png"));
-        ImageView newCard = new ImageView(img);
-        newCard.setFitWidth(250);
-        newCard.setFitHeight(170);
-        newCard.setOnMouseClicked(event -> showFloatingCardWindow(img, "Default Name", "0000 0000 0000 0000", "Debit Card", "1000 EGP"));
-        cardContainer.getChildren().add(newCard);
-        cardCount++;
+        if (tempcount<=cardCount) {
+            Image img = new Image(getClass().getResourceAsStream("/s2.png"));
+            ImageView newCard = new ImageView(img);
+            newCard.setFitWidth(250);
+            newCard.setFitHeight(170);
+            HBox.setMargin(newCard, new Insets(0, 0, 0, 0));
+            double balance = database_BankSystem.getBalance(userSession.getUsername());
+
+            newCard.setOnMouseClicked(event -> showFloatingCardWindow(img, userSession.getUsername(),  "5671986083000202", "Debit Card",String.valueOf(balance) + " EGP"));
+            if(cardCount==0) {
+                database_BankSystem.addCard(userSession.getUsername(), "Debit Card", balance);
+                cardCount++;
+            }
+            cardContainer.getChildren().add(newCard);
+            tempcount++;
+        } if (tempcount<cardCount) {
+            Image img = new Image(getClass().getResourceAsStream("/s4.png"));
+            ImageView newCard = new ImageView(img);
+            newCard.setFitWidth(250);
+            newCard.setFitHeight(170);
+            HBox.setMargin(newCard, new Insets(0, 0, 0, -170));
+            newCard.setOnMouseClicked(event -> showFloatingCardWindow(img, userSession.getUsername(), "4536 0001 2345 6789", type, amountValue));
+            cardContainer.getChildren().add(newCard);
+            tempcount++;
+        } if (tempcount<cardCount) {
+            Image img = new Image(getClass().getResourceAsStream("/s3.png"));
+            ImageView newCard = new ImageView(img);
+            newCard.setFitWidth(250);
+            newCard.setFitHeight(170);
+            HBox.setMargin(newCard, new Insets(0, 0, 0, -170));
+            newCard.setOnMouseClicked(event -> showFloatingCardWindow(img, userSession.getUsername(), "5169 0333 9988 0008", type, amountValue));
+            cardContainer.getChildren().add(newCard);
+            tempcount++;
+        } if (tempcount<cardCount) {
+            Image img = new Image(getClass().getResourceAsStream("/s1.png"));
+            ImageView newCard = new ImageView(img);
+            newCard.setFitWidth(250);
+            newCard.setFitHeight(170);
+            HBox.setMargin(newCard, new Insets(0, 0, 0, -170));
+            newCard.setOnMouseClicked(event -> showFloatingCardWindow(img, userSession.getUsername(), "1234 5678 9876 5432", type, amountValue));
+            cardContainer.getChildren().add(newCard);
+            cardCount++;
+            addCardButton.setVisible(false);
+            TranslateTransition moveLeft = new TranslateTransition(Duration.millis(500), cardContainer);
+            moveLeft.setByX(-60); // Move the HBox left by 60 pixels
+            moveLeft.play();
+        }
+
 
         XYChart.Series<String, Number> incomes = new XYChart.Series<>();
         incomes.setName("Incomes");
@@ -415,6 +485,9 @@ public class Account {
         addBtn.setOnAction(e -> {
             String cardType = cardTypeComboBox.getValue();
             String amount = amountField.getText();
+            UserSession session = UserSession.getInstance();
+            String username = session.getUsername();
+            database_BankSystem.addCard(username,  cardType, Double.parseDouble(amount));
 
             if (cardType == null || amount.isEmpty()) return;
 
@@ -422,7 +495,7 @@ public class Account {
             String name = cardType; // Use card type as name
             String number = "**** **** **** ****"; // Placeholder for card number
             String type = cardType; // Card type
-            String amountValue = amount + " EGP"; // Amount with currency
+            String amountValue = amount ; // Amount with currency
 
             // Add card based on cardCount
             if (cardCount == 0) {
@@ -431,7 +504,7 @@ public class Account {
                 newCard.setFitWidth(250);
                 newCard.setFitHeight(170);
                 HBox.setMargin(newCard, new Insets(0, 0, 0, 0));
-                newCard.setOnMouseClicked(event -> showFloatingCardWindow(img, name, number, type, amountValue));
+                newCard.setOnMouseClicked(event -> showFloatingCardWindow(img, userSession.getUsername(), "4536 0001 2345 6789", type, amountValue));
                 cardContainer.getChildren().add(newCard);
                 cardCount++;
             } else if (cardCount == 1) {
@@ -440,7 +513,9 @@ public class Account {
                 newCard.setFitWidth(250);
                 newCard.setFitHeight(170);
                 HBox.setMargin(newCard, new Insets(0, 0, 0, -170));
-                newCard.setOnMouseClicked(event -> showFloatingCardWindow(img, name, number, type, amountValue));
+                newCard.setOnMouseClicked(event -> showFloatingCardWindow(img, userSession.getUsername(), "4536 0001 2345 6789", type, amountValue));
+                database_BankSystem.addCard(userSession.getUsername(),type, Double.parseDouble(amountValue) );
+                database_BankSystem.updateBalance(userSession.getUsername(), Double.parseDouble(amountValue)+database_BankSystem.getBalance(userSession.getUsername()) );
                 cardContainer.getChildren().add(newCard);
                 cardCount++;
             } else if (cardCount == 2) {
@@ -449,7 +524,9 @@ public class Account {
                 newCard.setFitWidth(250);
                 newCard.setFitHeight(170);
                 HBox.setMargin(newCard, new Insets(0, 0, 0, -170));
-                newCard.setOnMouseClicked(event -> showFloatingCardWindow(img, name, number, type, amountValue));
+                newCard.setOnMouseClicked(event -> showFloatingCardWindow(img, userSession.getUsername(), "5169 0333 9988 0008", type, amountValue));
+                database_BankSystem.addCard(userSession.getUsername(),type, Double.parseDouble(amountValue) );
+                database_BankSystem.updateBalance(userSession.getUsername(), Double.parseDouble(amountValue)+database_BankSystem.getBalance(userSession.getUsername()) );
                 cardContainer.getChildren().add(newCard);
                 cardCount++;
             } else if (cardCount == 3) {
@@ -458,7 +535,9 @@ public class Account {
                 newCard.setFitWidth(250);
                 newCard.setFitHeight(170);
                 HBox.setMargin(newCard, new Insets(0, 0, 0, -170));
-                newCard.setOnMouseClicked(event -> showFloatingCardWindow(img, name, number, type, amountValue));
+                newCard.setOnMouseClicked(event -> showFloatingCardWindow(img, userSession.getUsername()," 1234 5678 9876 5432", type, amountValue));
+                database_BankSystem.addCard(userSession.getUsername(),type, Double.parseDouble(amountValue) );
+                database_BankSystem.updateBalance(userSession.getUsername(), Double.parseDouble(amountValue)+database_BankSystem.getBalance(userSession.getUsername()) );
                 cardContainer.getChildren().add(newCard);
                 cardCount++;
                 addCardButton.setVisible(false);
@@ -470,7 +549,6 @@ public class Account {
             dialog.close();
         });
     }
-
     private HBox createTransactionCard(Object[] t) {
         String name = (String) t[0];
         String detail = (String) t[1];
@@ -511,6 +589,49 @@ public class Account {
         box.getChildren().addAll(img, texts, spacer, amountLabel);
         return box;
     }
+
+    public  double calculateMonthlyIncome() {
+        UserSession userSession = UserSession.getInstance();
+        String username = userSession.getUsername();
+        String currentMonth = String.valueOf(java.time.LocalDate.now().getMonthValue());
+        return database_BankSystem.getMonthlyIncome(username, currentMonth);
+    }
+
+    // Calculate monthly expenses
+    public double calculateMonthlyExpenses() {
+        UserSession userSession = UserSession.getInstance();
+        String username = userSession.getUsername();
+        String currentMonth = String.valueOf(java.time.LocalDate.now().getMonthValue());
+        return database_BankSystem.getMonthlyExpenses(username, currentMonth);
+    }
+    public void updateIncomeExpenseLabels() {
+        double monthlyIncome = calculateMonthlyIncome();
+        double monthlyExpenses = calculateMonthlyExpenses();
+
+        AcInc.setText(String.format("$%.2f", monthlyIncome));
+        AcExp.setText(String.format("$%.2f", monthlyExpenses));
+    }
+    private void updateTotalBalanceDisplay() {
+        System.out.println(calculateMonthlyIncome());
+        UserSession userSession = UserSession.getInstance();
+        if (AcTotBl != null && userSession != null) {
+
+            String username = userSession.getUsername();
+            if (username != null && !username.isEmpty()) {
+                double balance = database_BankSystem.getBalance(username);
+                if (balance >= 0) {
+                    AcTotBl.setText(String.format("$%.2f", balance));
+                    cardbalance.setText(AcTotBl.getText());
+
+                } else {
+                    AcTotBl.setText("$0.00");
+                }
+            } else {
+                AcTotBl.setText("$0.00");
+            }
+        }
+    }
+
     //---------------------------------------------------------------------------------------------------------------------------------------------//
     //sidebar
     private void setupHomeAnimation(FontAwesomeIconView icon, Label label) {
@@ -1073,7 +1194,8 @@ public class Account {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.setTitle("FindUs");
-        stage.setFullScreen(true);
+        stage.setWidth(1550);
+        stage.setHeight(840);
         stage.centerOnScreen();
         stage.show();
     }

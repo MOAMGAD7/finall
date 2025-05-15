@@ -93,6 +93,9 @@ public class ChatBotController {
 
     @FXML
     private ImageView homeGif;
+
+    @FXML
+    private ImageView HomeImage;
     //-------------------------------------------------------------------------------------------------------------//
 
 
@@ -112,6 +115,15 @@ public class ChatBotController {
         // Get the username from the session
         UserSession session = UserSession.getInstance();
         currentUsername = session.getUsername();
+        String username = session.getUsername();
+
+        database_BankSystem.UserDetails userDetails = database_BankSystem.getUserDetails(username);
+        String imagePath = userDetails.getProfileImage();
+        if (imagePath != null && !imagePath.isEmpty()) {
+            HomeImage.setImage(new Image("file:" + imagePath));
+        }
+
+
         if (currentUsername == null) {
             addMessageToChat("System", "User session not found. Please log in again.", "message-system");
         } else {

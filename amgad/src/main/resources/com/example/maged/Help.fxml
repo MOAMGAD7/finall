@@ -35,17 +35,17 @@
                     </Label>
                 </children>
             </HBox>
-            <Label fx:id="AccountUser6" prefHeight="27.0" prefWidth="157.0" style="-fx-font-size: 18px; -fx-font-weight: bold;" textFill="WHITE">
+            <Label fx:id="AccountUser6" prefHeight="27.0" prefWidth="243.0" style="-fx-font-size: 18px; -fx-font-weight: bold;" textFill="WHITE">
             <graphic>
                <Label text="Welcome, " textFill="WHITE" />
             </graphic></Label>
             <Region fx:id="spacer" HBox.hgrow="ALWAYS" />
-            <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-background-color: rgba(50, 50, 50, 0.2); -fx-background-radius: 25; -fx-padding: 5 15;">
+            <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-background-color: rgba(255,255,255,0.1); -fx-background-radius: 25; -fx-padding: 5 15; -fx-border-color: rgba(255,255,255,0.2); -fx-border-radius: 25;">
                 <FontAwesomeIconView fx:id="searchIcon" fill="WHITE" glyphName="SEARCH" size="16" />
                 <TextField fx:id="searchField" focusTraversable="false" promptText="Search" style="-fx-background-color: transparent; -fx-border-color: transparent;" />
             </HBox>
             <FontAwesomeIconView fx:id="bellIcon" fill="WHITE" glyphName="BELL" size="18" />
-            <ImageView fx:id="profileImage" fitHeight="32" fitWidth="32" />
+            <ImageView fx:id="HomeImage" fitHeight="42.0" fitWidth="65.0" />
             <BorderPane.margin>
                 <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
             </BorderPane.margin>

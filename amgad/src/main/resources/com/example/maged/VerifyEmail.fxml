@@ -60,7 +60,7 @@
                 </Label>
                 
                 <!-- Verify Button -->
-                <Button fx:id="verifyButton" onAction="#handleVerifyCode" prefHeight="45.0" prefWidth="250.0" style="-fx-background-color: linear-gradient(to bottom, #00a2ff, #0066cc); -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 22px; -fx-effect: dropshadow(gaussian, rgba(0,140,255,0.8), 12, 0, 0, 0);" text="VERIFY CODE">
+                <Button fx:id="verifyButton" onAction="#handleVerifyCode" prefHeight="45.0" prefWidth="250.0" style="-fx-background-color: linear-gradient(to bottom, #00a2ff, #0066cc); -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 22px; -fx-effect: dropshadow(gaussian, rgba(0,140,255,0.8), 12, 0, 0, 0);" styleClass="loginbutton" stylesheets="@Login.css" text="VERIFY CODE">
                     <graphic>
                         <FontAwesomeIconView fill="WHITE" glyphName="CHECK" size="18" />
                     </graphic>
@@ -70,7 +70,7 @@
                 </Button>
                 
                 <!-- Back to Login Button -->
-                <Button onAction="#switchToLogin" prefHeight="40.0" prefWidth="180.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 20px; -fx-border-color: rgba(0,191,255,0.7); -fx-border-radius: 20px; -fx-border-width: 1px;" text="BACK TO LOGIN">
+                <Button onAction="#switchToLogin" prefHeight="40.0" prefWidth="180.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 20px; -fx-border-color: rgba(0,191,255,0.7); -fx-border-radius: 20px; -fx-border-width: 1px;" styleClass="loginbutton" stylesheets="@Login.css" text="BACK TO LOGIN">
                     <graphic>
                         <FontAwesomeIconView fill="WHITE" glyphName="ARROW_LEFT" size="16" />
                     </graphic>

@@ -94,6 +94,8 @@ public class Payment {
     public Button ToOthr;
     @FXML
     private Button toTransfer;
+
+
     //------------------------------------------------------------------------------------------------------------------------------------------//
     //sidebar
     @FXML
@@ -153,10 +155,44 @@ public class Payment {
 
     @FXML
     private Label AccountUser3;
+
+    @FXML
+    private ImageView HomeImage;
+
     //-------------------------------------------------------------------------------------------------------------//
+
+    @FXML
     public void initialize() {
+        //Data Base
+        UserSession session = UserSession.getInstance();
+        String username = session.getUsername();
+        AccountUser3.setText(username);
 
+        database_BankSystem.UserDetails userDetails = database_BankSystem.getUserDetails(username);
+        String imagePath = userDetails.getProfileImage();
+        if (imagePath != null && !imagePath.isEmpty()) {
+            HomeImage.setImage(new Image("file:" + imagePath));
+        }
 
+            // الحصول على رصيد المستخدم من قاعدة البيانات
+        if (username != null) {
+            double balance = database_BankSystem.getBalance(username);
+            if (balance >= 0) {
+                // عرض الرصيد في اللافتة BlINPy
+                BlINPy.setText(String.format("%.2f EGP", balance));
+
+                // تحميل آخر ٦ عمليات تحويل من قاعدة البيانات
+                loadTransactionHistory(username, 6);
+            } else {
+                // إذا حدث خطأ في استرجاع الرصيد
+                BlINPy.setText("N/A");
+                System.out.println("❌ تعذر استرجاع رصيد المستخدم: " + username);
+            }
+        } else {
+            // إذا لم يتم تسجيل الدخول
+            BlINPy.setText("N/A");
+            System.out.println("❌ لم يتم تسجيل الدخول، لا يمكن عرض الرصيد");
+        }
 
         //-------------------------------------------------------------------------------------------------------------------------------------------//
         //sidebar
@@ -187,31 +223,397 @@ public class Payment {
             System.out.println("Warning: homeGif is null");
         }
         //---------------------------------------------------------------------------------------------------------------------------------------------//
-
-        // الحصول على اسم المستخدم الحالي من UserSession
-        UserSession session = UserSession.getInstance();
-        String username = session.getUsername();
-        AccountUser3.setText(username);
-        // الحصول على رصيد المستخدم من قاعدة البيانات
-        if (username != null) {
-            double balance = database_BankSystem.getBalance(username);
-            if (balance >= 0) {
-                // عرض الرصيد في اللافتة BlINPy
-                BlINPy.setText(String.format("%.2f EGP", balance));
-
-                // تحميل آخر ٦ عمليات تحويل من قاعدة البيانات
-                loadTransactionHistory(username, 6);
-            } else {
-                // إذا حدث خطأ في استرجاع الرصيد
-                BlINPy.setText("N/A");
-                System.out.println("❌ تعذر استرجاع رصيد المستخدم: " + username);
-            }
-        } else {
-            // إذا لم يتم تسجيل الدخول
-            BlINPy.setText("N/A");
-            System.out.println("❌ لم يتم تسجيل الدخول، لا يمكن عرض الرصيد");
-        }
     }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------------//
+    //sidebar
+    private void setupHomeAnimation(FontAwesomeIconView icon, Label label) {
+        if (icon == null || label == null) {
+            System.out.println("Warning: homeIcon or homeLabel is null");
+            return;
+        }
+        Rotate rotate = new Rotate(0, 0, icon.getLayoutY(), 0, Rotate.Y_AXIS);
+        icon.getTransforms().add(rotate);
+
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(rotate.angleProperty(), 0)),
+                new KeyFrame(Duration.millis(300), new KeyValue(rotate.angleProperty(), 60)),
+                new KeyFrame(Duration.millis(600), new KeyValue(rotate.angleProperty(), 60)),
+                new KeyFrame(Duration.millis(900), new KeyValue(rotate.angleProperty(), 0))
+        );
+        timeline.setCycleCount(1);
+
+        label.setOnMouseEntered(event -> {
+            icon.setEffect(new DropShadow(10, Color.GRAY));
+            timeline.playFromStart();
+        });
+        label.setOnMouseExited(event -> {
+            icon.setEffect(null);
+            rotate.setAngle(0);
+        });
+    }
+
+    private void setupUserAnimation(FontAwesomeIconView icon, Label label) {
+        if (icon == null || label == null) {
+            System.out.println("Warning: userIcon or userLabel is null");
+            return;
+        }
+        Scale scale = new Scale(1, 1);
+        icon.getTransforms().add(scale);
+
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(scale.xProperty(), 1), new KeyValue(scale.yProperty(), 1)),
+                new KeyFrame(Duration.millis(300), new KeyValue(scale.xProperty(), 1.3), new KeyValue(scale.yProperty(), 1.3)),
+                new KeyFrame(Duration.millis(600), new KeyValue(scale.xProperty(), 1.3), new KeyValue(scale.yProperty(), 1.3)),
+                new KeyFrame(Duration.millis(900), new KeyValue(scale.xProperty(), 1), new KeyValue(scale.yProperty(), 1))
+        );
+        timeline.setCycleCount(1);
+
+        label.setOnMouseEntered(event -> {
+            icon.setEffect(new DropShadow(10, Color.GRAY));
+            timeline.playFromStart();
+        });
+        label.setOnMouseExited(event -> {
+            icon.setEffect(null);
+            scale.setX(1);
+            scale.setY(1);
+        });
+    }
+
+    private void setupExchangeAnimation(FontAwesomeIconView icon, Label label) {
+        if (icon == null || label == null) {
+            System.out.println("Warning: exchangeIcon or exchangeLabel is null");
+            return;
+        }
+        Translate translate = new Translate(0, 0);
+        icon.getTransforms().add(translate);
+
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(translate.xProperty(), 0)),
+                new KeyFrame(Duration.millis(300), new KeyValue(translate.xProperty(), 10)),
+                new KeyFrame(Duration.millis(600), new KeyValue(translate.xProperty(), 10)),
+                new KeyFrame(Duration.millis(900), new KeyValue(translate.xProperty(), 0))
+        );
+        timeline.setCycleCount(1);
+
+        label.setOnMouseEntered(event -> {
+            icon.setEffect(new DropShadow(10, Color.GRAY));
+            timeline.playFromStart();
+        });
+        label.setOnMouseExited(event -> {
+            icon.setEffect(null);
+            translate.setX(0);
+        });
+    }
+
+    private void setupMoneyAnimation(FontAwesomeIconView icon, Label label) {
+        if (icon == null || label == null) {
+            System.out.println("Warning: moneyIcon or moneyLabel is null");
+            return;
+        }
+        Rotate rotate = new Rotate(0, Rotate.Z_AXIS);
+        icon.getTransforms().add(rotate);
+
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(rotate.angleProperty(), 0)),
+                new KeyFrame(Duration.millis(300), new KeyValue(rotate.angleProperty(), 180)),
+                new KeyFrame(Duration.millis(600), new KeyValue(rotate.angleProperty(), 180)),
+                new KeyFrame(Duration.millis(900), new KeyValue(rotate.angleProperty(), 360))
+        );
+        timeline.setCycleCount(1);
+
+        label.setOnMouseEntered(event -> {
+            icon.setEffect(new DropShadow(10, Color.GRAY));
+            timeline.playFromStart();
+        });
+        label.setOnMouseExited(event -> {
+            icon.setEffect(null);
+            rotate.setAngle(0);
+        });
+    }
+
+    private void setupChartAnimation(FontAwesomeIconView icon, Label label) {
+        if (icon == null || label == null) {
+            System.out.println("Warning: chartIcon or chartLabel is null");
+            return;
+        }
+        Translate translate = new Translate(0, 0);
+        icon.getTransforms().add(translate);
+
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(translate.yProperty(), 0)),
+                new KeyFrame(Duration.millis(300), new KeyValue(translate.yProperty(), -10)),
+                new KeyFrame(Duration.millis(600), new KeyValue(translate.yProperty(), -10)),
+                new KeyFrame(Duration.millis(900), new KeyValue(translate.yProperty(), 0))
+        );
+        timeline.setCycleCount(1);
+
+        label.setOnMouseEntered(event -> {
+            icon.setEffect(new DropShadow(10, Color.GRAY));
+            timeline.playFromStart();
+        });
+        label.setOnMouseExited(event -> {
+            icon.setEffect(null);
+            translate.setY(0);
+        });
+    }
+
+    private void setupMapAnimation(FontAwesomeIconView icon, Label label) {
+        if (icon == null || label == null) {
+            System.out.println("Warning: mapIcon or mapLabel is null");
+            return;
+        }
+        Scale scale = new Scale(1, 1);
+        icon.getTransforms().add(scale);
+
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO,
+                        new KeyValue(scale.xProperty(), 1),
+                        new KeyValue(scale.yProperty(), 1),
+                        new KeyValue(icon.opacityProperty(), 1.0)),
+                new KeyFrame(Duration.millis(300),
+                        new KeyValue(scale.xProperty(), 1.2),
+                        new KeyValue(scale.yProperty(), 1.2),
+                        new KeyValue(icon.opacityProperty(), 0.7)),
+                new KeyFrame(Duration.millis(600),
+                        new KeyValue(scale.xProperty(), 1.2),
+                        new KeyValue(scale.yProperty(), 1.2),
+                        new KeyValue(icon.opacityProperty(), 0.7)),
+                new KeyFrame(Duration.millis(900),
+                        new KeyValue(scale.xProperty(), 1),
+                        new KeyValue(scale.yProperty(), 1),
+                        new KeyValue(icon.opacityProperty(), 1.0))
+        );
+        timeline.setCycleCount(1);
+
+        label.setOnMouseEntered(event -> {
+            icon.setEffect(new DropShadow(10, Color.GRAY));
+            timeline.playFromStart();
+        });
+        label.setOnMouseExited(event -> {
+            icon.setEffect(null);
+            scale.setX(1);
+            scale.setY(1);
+            icon.setOpacity(1.0);
+        });
+    }
+
+    private void setupCogAnimation(FontAwesomeIconView icon, Label label) {
+        if (icon == null || label == null) {
+            System.out.println("Warning: cogIcon or cogLabel is null");
+            return;
+        }
+        Rotate rotate = new Rotate(0, Rotate.Z_AXIS);
+        icon.getTransforms().add(rotate);
+
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(rotate.angleProperty(), 0)),
+                new KeyFrame(Duration.millis(300), new KeyValue(rotate.angleProperty(), 180)),
+                new KeyFrame(Duration.millis(600), new KeyValue(rotate.angleProperty(), 180)),
+                new KeyFrame(Duration.millis(900), new KeyValue(rotate.angleProperty(), 360))
+        );
+        timeline.setCycleCount(1);
+
+        label.setOnMouseEntered(event -> {
+            icon.setEffect(new DropShadow(10, Color.GRAY));
+            timeline.playFromStart();
+        });
+        label.setOnMouseExited(event -> {
+            icon.setEffect(null);
+            rotate.setAngle(0);
+        });
+    }
+
+    private void setupHelpAnimation(FontAwesomeIconView icon, Label label) {
+        if (icon == null || label == null) {
+            System.out.println("Warning: helpIcon or helpLabel is null");
+            return;
+        }
+        Translate translate = new Translate(0, 0);
+        icon.getTransforms().add(translate);
+
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(translate.yProperty(), 0)),
+                new KeyFrame(Duration.millis(150), new KeyValue(translate.yProperty(), -8)),
+                new KeyFrame(Duration.millis(300), new KeyValue(translate.yProperty(), 0)),
+                new KeyFrame(Duration.millis(450), new KeyValue(translate.yProperty(), -8)),
+                new KeyFrame(Duration.millis(600), new KeyValue(translate.yProperty(), 0)),
+                new KeyFrame(Duration.millis(750), new KeyValue(translate.yProperty(), -8)),
+                new KeyFrame(Duration.millis(900), new KeyValue(translate.yProperty(), 0))
+        );
+        timeline.setCycleCount(1);
+
+        label.setOnMouseEntered(event -> {
+            icon.setEffect(new DropShadow(10, Color.GRAY));
+            timeline.playFromStart();
+        });
+        label.setOnMouseExited(event -> {
+            icon.setEffect(null);
+            translate.setY(0);
+        });
+    }
+
+    private void setupCommentAnimation(FontAwesomeIconView icon, Label label) {
+        if (icon == null || label == null) {
+            System.out.println("Warning: commentIcon or commentLabel is null");
+            return;
+        }
+        Translate translate = new Translate(0, 0);
+        Scale scale = new Scale(1, 1);
+        icon.getTransforms().addAll(translate, scale);
+
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO,
+                        new KeyValue(translate.yProperty(), 0),
+                        new KeyValue(scale.xProperty(), 1),
+                        new KeyValue(scale.yProperty(), 1)),
+                new KeyFrame(Duration.millis(150),
+                        new KeyValue(translate.yProperty(), -6),
+                        new KeyValue(scale.xProperty(), 1.1),
+                        new KeyValue(scale.yProperty(), 1.1)),
+                new KeyFrame(Duration.millis(300),
+                        new KeyValue(translate.yProperty(), 0),
+                        new KeyValue(scale.xProperty(), 1.0),
+                        new KeyValue(scale.yProperty(), 1.0)),
+                new KeyFrame(Duration.millis(450),
+                        new KeyValue(translate.yProperty(), -6),
+                        new KeyValue(scale.xProperty(), 1.1),
+                        new KeyValue(scale.yProperty(), 1.1)),
+                new KeyFrame(Duration.millis(600),
+                        new KeyValue(translate.yProperty(), 0),
+                        new KeyValue(scale.xProperty(), 1.0),
+                        new KeyValue(scale.yProperty(), 1.0)),
+                new KeyFrame(Duration.millis(750),
+                        new KeyValue(translate.yProperty(), -6),
+                        new KeyValue(scale.xProperty(), 1.1),
+                        new KeyValue(scale.yProperty(), 1.1)),
+                new KeyFrame(Duration.millis(900),
+                        new KeyValue(translate.yProperty(), 0),
+                        new KeyValue(scale.xProperty(), 1.0),
+                        new KeyValue(scale.yProperty(), 1.0))
+        );
+        timeline.setCycleCount(1);
+
+        label.setOnMouseEntered(event -> {
+            icon.setEffect(new DropShadow(10, Color.GRAY));
+            timeline.playFromStart();
+        });
+        label.setOnMouseExited(event -> {
+            icon.setEffect(null);
+            translate.setY(0);
+            scale.setX(1);
+            scale.setY(1);
+        });
+    }
+
+    private void setupSearchAnimation(FontAwesomeIconView icon) {
+        if (icon == null) {
+            System.out.println("Warning: searchIcon is null");
+            return;
+        }
+        Scale scale = new Scale(1, 1);
+        Rotate rotate = new Rotate(0, Rotate.Z_AXIS);
+        icon.getTransforms().addAll(scale, rotate);
+
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO,
+                        new KeyValue(scale.xProperty(), 1),
+                        new KeyValue(scale.yProperty(), 1),
+                        new KeyValue(rotate.angleProperty(), 0)),
+                new KeyFrame(Duration.millis(300),
+                        new KeyValue(scale.xProperty(), 1.5),
+                        new KeyValue(scale.yProperty(), 1.5),
+                        new KeyValue(rotate.angleProperty(), 15)),
+                new KeyFrame(Duration.millis(600),
+                        new KeyValue(scale.xProperty(), 1.5),
+                        new KeyValue(scale.yProperty(), 1.5),
+                        new KeyValue(rotate.angleProperty(), 15)),
+                new KeyFrame(Duration.millis(900),
+                        new KeyValue(scale.xProperty(), 1),
+                        new KeyValue(scale.yProperty(), 1),
+                        new KeyValue(rotate.angleProperty(), 0))
+        );
+        timeline.setCycleCount(1);
+
+        icon.setOnMouseEntered(event -> {
+            icon.setEffect(new DropShadow(10, Color.GRAY));
+            timeline.playFromStart();
+        });
+        icon.setOnMouseExited(event -> {
+            icon.setEffect(null);
+            scale.setX(1);
+            scale.setY(1);
+            rotate.setAngle(0);
+        });
+    }
+
+    private void setupBellAnimation(FontAwesomeIconView icon) {
+        if (icon == null) {
+            System.out.println("Warning: bellIcon is null");
+            return;
+        }
+        Rotate rotate = new Rotate(0, Rotate.Z_AXIS);
+        icon.getTransforms().add(rotate);
+
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(rotate.angleProperty(), 0)),
+                new KeyFrame(Duration.millis(150), new KeyValue(rotate.angleProperty(), 15)),
+                new KeyFrame(Duration.millis(300), new KeyValue(rotate.angleProperty(), -15)),
+                new KeyFrame(Duration.millis(450), new KeyValue(rotate.angleProperty(), 10)),
+                new KeyFrame(Duration.millis(600), new KeyValue(rotate.angleProperty(), -10)),
+                new KeyFrame(Duration.millis(750), new KeyValue(rotate.angleProperty(), 5)),
+                new KeyFrame(Duration.millis(900), new KeyValue(rotate.angleProperty(), 0))
+        );
+        timeline.setCycleCount(1);
+
+        icon.setOnMouseEntered(event -> {
+            icon.setEffect(new DropShadow(10, Color.GRAY));
+            timeline.playFromStart();
+        });
+        icon.setOnMouseExited(event -> {
+            icon.setEffect(null);
+            rotate.setAngle(0);
+        });
+    }
+
+    private void setupGifAnimation(ImageView gif) {
+        if (gif == null) {
+            System.out.println("Warning: homeGif is null");
+            return;
+        }
+        Scale scale = new Scale(1, 1);
+        gif.getTransforms().add(scale);
+
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO,
+                        new KeyValue(scale.xProperty(), 1),
+                        new KeyValue(scale.yProperty(), 1)),
+                new KeyFrame(Duration.millis(300),
+                        new KeyValue(scale.xProperty(), 1.1),
+                        new KeyValue(scale.yProperty(), 1.1)),
+                new KeyFrame(Duration.millis(600),
+                        new KeyValue(scale.xProperty(), 1.1),
+                        new KeyValue(scale.yProperty(), 1.1)),
+                new KeyFrame(Duration.millis(900),
+                        new KeyValue(scale.xProperty(), 1),
+                        new KeyValue(scale.yProperty(), 1))
+        );
+        timeline.setCycleCount(1);
+
+        gif.setOnMouseEntered(event -> {
+            gif.setEffect(new DropShadow(10, Color.GRAY));
+            timeline.playFromStart();
+        });
+        gif.setOnMouseExited(event -> {
+            gif.setEffect(null);
+            scale.setX(1);
+            scale.setY(1);
+        });
+    }
+    //---------------------------------------------------------------------------------------------------------------------------------------------//
+
+
+
 
     /**
      * تحميل آخر عمليات التحويل من قاعدة البيانات وعرضها في واجهة المستخدم
@@ -934,6 +1336,7 @@ public class Payment {
             System.err.println("Failed to load background image: " + e.getMessage());
             backgroundImage = null;
         }
+
         // Get screen dimensions
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         double screenWidth = screenBounds.getWidth();
@@ -1127,392 +1530,7 @@ public class Payment {
         Stage stage = (Stage) ToBills.getScene().getWindow();
         stage.setScene(scene);
     }
-    //---------------------------------------------------------------------------------------------------------------------------------------------//
-    //sidebar
-    private void setupHomeAnimation(FontAwesomeIconView icon, Label label) {
-        if (icon == null || label == null) {
-            System.out.println("Warning: homeIcon or homeLabel is null");
-            return;
-        }
-        Rotate rotate = new Rotate(0, 0, icon.getLayoutY(), 0, Rotate.Y_AXIS);
-        icon.getTransforms().add(rotate);
 
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(rotate.angleProperty(), 0)),
-                new KeyFrame(Duration.millis(300), new KeyValue(rotate.angleProperty(), 60)),
-                new KeyFrame(Duration.millis(600), new KeyValue(rotate.angleProperty(), 60)),
-                new KeyFrame(Duration.millis(900), new KeyValue(rotate.angleProperty(), 0))
-        );
-        timeline.setCycleCount(1);
-
-        label.setOnMouseEntered(event -> {
-            icon.setEffect(new DropShadow(10, Color.GRAY));
-            timeline.playFromStart();
-        });
-        label.setOnMouseExited(event -> {
-            icon.setEffect(null);
-            rotate.setAngle(0);
-        });
-    }
-
-    private void setupUserAnimation(FontAwesomeIconView icon, Label label) {
-        if (icon == null || label == null) {
-            System.out.println("Warning: userIcon or userLabel is null");
-            return;
-        }
-        Scale scale = new Scale(1, 1);
-        icon.getTransforms().add(scale);
-
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(scale.xProperty(), 1), new KeyValue(scale.yProperty(), 1)),
-                new KeyFrame(Duration.millis(300), new KeyValue(scale.xProperty(), 1.3), new KeyValue(scale.yProperty(), 1.3)),
-                new KeyFrame(Duration.millis(600), new KeyValue(scale.xProperty(), 1.3), new KeyValue(scale.yProperty(), 1.3)),
-                new KeyFrame(Duration.millis(900), new KeyValue(scale.xProperty(), 1), new KeyValue(scale.yProperty(), 1))
-        );
-        timeline.setCycleCount(1);
-
-        label.setOnMouseEntered(event -> {
-            icon.setEffect(new DropShadow(10, Color.GRAY));
-            timeline.playFromStart();
-        });
-        label.setOnMouseExited(event -> {
-            icon.setEffect(null);
-            scale.setX(1);
-            scale.setY(1);
-        });
-    }
-
-    private void setupExchangeAnimation(FontAwesomeIconView icon, Label label) {
-        if (icon == null || label == null) {
-            System.out.println("Warning: exchangeIcon or exchangeLabel is null");
-            return;
-        }
-        Translate translate = new Translate(0, 0);
-        icon.getTransforms().add(translate);
-
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(translate.xProperty(), 0)),
-                new KeyFrame(Duration.millis(300), new KeyValue(translate.xProperty(), 10)),
-                new KeyFrame(Duration.millis(600), new KeyValue(translate.xProperty(), 10)),
-                new KeyFrame(Duration.millis(900), new KeyValue(translate.xProperty(), 0))
-        );
-        timeline.setCycleCount(1);
-
-        label.setOnMouseEntered(event -> {
-            icon.setEffect(new DropShadow(10, Color.GRAY));
-            timeline.playFromStart();
-        });
-        label.setOnMouseExited(event -> {
-            icon.setEffect(null);
-            translate.setX(0);
-        });
-    }
-
-    private void setupMoneyAnimation(FontAwesomeIconView icon, Label label) {
-        if (icon == null || label == null) {
-            System.out.println("Warning: moneyIcon or moneyLabel is null");
-            return;
-        }
-        Rotate rotate = new Rotate(0, Rotate.Z_AXIS);
-        icon.getTransforms().add(rotate);
-
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(rotate.angleProperty(), 0)),
-                new KeyFrame(Duration.millis(300), new KeyValue(rotate.angleProperty(), 180)),
-                new KeyFrame(Duration.millis(600), new KeyValue(rotate.angleProperty(), 180)),
-                new KeyFrame(Duration.millis(900), new KeyValue(rotate.angleProperty(), 360))
-        );
-        timeline.setCycleCount(1);
-
-        label.setOnMouseEntered(event -> {
-            icon.setEffect(new DropShadow(10, Color.GRAY));
-            timeline.playFromStart();
-        });
-        label.setOnMouseExited(event -> {
-            icon.setEffect(null);
-            rotate.setAngle(0);
-        });
-    }
-
-    private void setupChartAnimation(FontAwesomeIconView icon, Label label) {
-        if (icon == null || label == null) {
-            System.out.println("Warning: chartIcon or chartLabel is null");
-            return;
-        }
-        Translate translate = new Translate(0, 0);
-        icon.getTransforms().add(translate);
-
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(translate.yProperty(), 0)),
-                new KeyFrame(Duration.millis(300), new KeyValue(translate.yProperty(), -10)),
-                new KeyFrame(Duration.millis(600), new KeyValue(translate.yProperty(), -10)),
-                new KeyFrame(Duration.millis(900), new KeyValue(translate.yProperty(), 0))
-        );
-        timeline.setCycleCount(1);
-
-        label.setOnMouseEntered(event -> {
-            icon.setEffect(new DropShadow(10, Color.GRAY));
-            timeline.playFromStart();
-        });
-        label.setOnMouseExited(event -> {
-            icon.setEffect(null);
-            translate.setY(0);
-        });
-    }
-
-    private void setupMapAnimation(FontAwesomeIconView icon, Label label) {
-        if (icon == null || label == null) {
-            System.out.println("Warning: mapIcon or mapLabel is null");
-            return;
-        }
-        Scale scale = new Scale(1, 1);
-        icon.getTransforms().add(scale);
-
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.ZERO,
-                        new KeyValue(scale.xProperty(), 1),
-                        new KeyValue(scale.yProperty(), 1),
-                        new KeyValue(icon.opacityProperty(), 1.0)),
-                new KeyFrame(Duration.millis(300),
-                        new KeyValue(scale.xProperty(), 1.2),
-                        new KeyValue(scale.yProperty(), 1.2),
-                        new KeyValue(icon.opacityProperty(), 0.7)),
-                new KeyFrame(Duration.millis(600),
-                        new KeyValue(scale.xProperty(), 1.2),
-                        new KeyValue(scale.yProperty(), 1.2),
-                        new KeyValue(icon.opacityProperty(), 0.7)),
-                new KeyFrame(Duration.millis(900),
-                        new KeyValue(scale.xProperty(), 1),
-                        new KeyValue(scale.yProperty(), 1),
-                        new KeyValue(icon.opacityProperty(), 1.0))
-        );
-        timeline.setCycleCount(1);
-
-        label.setOnMouseEntered(event -> {
-            icon.setEffect(new DropShadow(10, Color.GRAY));
-            timeline.playFromStart();
-        });
-        label.setOnMouseExited(event -> {
-            icon.setEffect(null);
-            scale.setX(1);
-            scale.setY(1);
-            icon.setOpacity(1.0);
-        });
-    }
-
-    private void setupCogAnimation(FontAwesomeIconView icon, Label label) {
-        if (icon == null || label == null) {
-            System.out.println("Warning: cogIcon or cogLabel is null");
-            return;
-        }
-        Rotate rotate = new Rotate(0, Rotate.Z_AXIS);
-        icon.getTransforms().add(rotate);
-
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(rotate.angleProperty(), 0)),
-                new KeyFrame(Duration.millis(300), new KeyValue(rotate.angleProperty(), 180)),
-                new KeyFrame(Duration.millis(600), new KeyValue(rotate.angleProperty(), 180)),
-                new KeyFrame(Duration.millis(900), new KeyValue(rotate.angleProperty(), 360))
-        );
-        timeline.setCycleCount(1);
-
-        label.setOnMouseEntered(event -> {
-            icon.setEffect(new DropShadow(10, Color.GRAY));
-            timeline.playFromStart();
-        });
-        label.setOnMouseExited(event -> {
-            icon.setEffect(null);
-            rotate.setAngle(0);
-        });
-    }
-
-    private void setupHelpAnimation(FontAwesomeIconView icon, Label label) {
-        if (icon == null || label == null) {
-            System.out.println("Warning: helpIcon or helpLabel is null");
-            return;
-        }
-        Translate translate = new Translate(0, 0);
-        icon.getTransforms().add(translate);
-
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(translate.yProperty(), 0)),
-                new KeyFrame(Duration.millis(150), new KeyValue(translate.yProperty(), -8)),
-                new KeyFrame(Duration.millis(300), new KeyValue(translate.yProperty(), 0)),
-                new KeyFrame(Duration.millis(450), new KeyValue(translate.yProperty(), -8)),
-                new KeyFrame(Duration.millis(600), new KeyValue(translate.yProperty(), 0)),
-                new KeyFrame(Duration.millis(750), new KeyValue(translate.yProperty(), -8)),
-                new KeyFrame(Duration.millis(900), new KeyValue(translate.yProperty(), 0))
-        );
-        timeline.setCycleCount(1);
-
-        label.setOnMouseEntered(event -> {
-            icon.setEffect(new DropShadow(10, Color.GRAY));
-            timeline.playFromStart();
-        });
-        label.setOnMouseExited(event -> {
-            icon.setEffect(null);
-            translate.setY(0);
-        });
-    }
-
-    private void setupCommentAnimation(FontAwesomeIconView icon, Label label) {
-        if (icon == null || label == null) {
-            System.out.println("Warning: commentIcon or commentLabel is null");
-            return;
-        }
-        Translate translate = new Translate(0, 0);
-        Scale scale = new Scale(1, 1);
-        icon.getTransforms().addAll(translate, scale);
-
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.ZERO,
-                        new KeyValue(translate.yProperty(), 0),
-                        new KeyValue(scale.xProperty(), 1),
-                        new KeyValue(scale.yProperty(), 1)),
-                new KeyFrame(Duration.millis(150),
-                        new KeyValue(translate.yProperty(), -6),
-                        new KeyValue(scale.xProperty(), 1.1),
-                        new KeyValue(scale.yProperty(), 1.1)),
-                new KeyFrame(Duration.millis(300),
-                        new KeyValue(translate.yProperty(), 0),
-                        new KeyValue(scale.xProperty(), 1.0),
-                        new KeyValue(scale.yProperty(), 1.0)),
-                new KeyFrame(Duration.millis(450),
-                        new KeyValue(translate.yProperty(), -6),
-                        new KeyValue(scale.xProperty(), 1.1),
-                        new KeyValue(scale.yProperty(), 1.1)),
-                new KeyFrame(Duration.millis(600),
-                        new KeyValue(translate.yProperty(), 0),
-                        new KeyValue(scale.xProperty(), 1.0),
-                        new KeyValue(scale.yProperty(), 1.0)),
-                new KeyFrame(Duration.millis(750),
-                        new KeyValue(translate.yProperty(), -6),
-                        new KeyValue(scale.xProperty(), 1.1),
-                        new KeyValue(scale.yProperty(), 1.1)),
-                new KeyFrame(Duration.millis(900),
-                        new KeyValue(translate.yProperty(), 0),
-                        new KeyValue(scale.xProperty(), 1.0),
-                        new KeyValue(scale.yProperty(), 1.0))
-        );
-        timeline.setCycleCount(1);
-
-        label.setOnMouseEntered(event -> {
-            icon.setEffect(new DropShadow(10, Color.GRAY));
-            timeline.playFromStart();
-        });
-        label.setOnMouseExited(event -> {
-            icon.setEffect(null);
-            translate.setY(0);
-            scale.setX(1);
-            scale.setY(1);
-        });
-    }
-
-    private void setupSearchAnimation(FontAwesomeIconView icon) {
-        if (icon == null) {
-            System.out.println("Warning: searchIcon is null");
-            return;
-        }
-        Scale scale = new Scale(1, 1);
-        Rotate rotate = new Rotate(0, Rotate.Z_AXIS);
-        icon.getTransforms().addAll(scale, rotate);
-
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.ZERO,
-                        new KeyValue(scale.xProperty(), 1),
-                        new KeyValue(scale.yProperty(), 1),
-                        new KeyValue(rotate.angleProperty(), 0)),
-                new KeyFrame(Duration.millis(300),
-                        new KeyValue(scale.xProperty(), 1.5),
-                        new KeyValue(scale.yProperty(), 1.5),
-                        new KeyValue(rotate.angleProperty(), 15)),
-                new KeyFrame(Duration.millis(600),
-                        new KeyValue(scale.xProperty(), 1.5),
-                        new KeyValue(scale.yProperty(), 1.5),
-                        new KeyValue(rotate.angleProperty(), 15)),
-                new KeyFrame(Duration.millis(900),
-                        new KeyValue(scale.xProperty(), 1),
-                        new KeyValue(scale.yProperty(), 1),
-                        new KeyValue(rotate.angleProperty(), 0))
-        );
-        timeline.setCycleCount(1);
-
-        icon.setOnMouseEntered(event -> {
-            icon.setEffect(new DropShadow(10, Color.GRAY));
-            timeline.playFromStart();
-        });
-        icon.setOnMouseExited(event -> {
-            icon.setEffect(null);
-            scale.setX(1);
-            scale.setY(1);
-            rotate.setAngle(0);
-        });
-    }
-
-    private void setupBellAnimation(FontAwesomeIconView icon) {
-        if (icon == null) {
-            System.out.println("Warning: bellIcon is null");
-            return;
-        }
-        Rotate rotate = new Rotate(0, Rotate.Z_AXIS);
-        icon.getTransforms().add(rotate);
-
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(rotate.angleProperty(), 0)),
-                new KeyFrame(Duration.millis(150), new KeyValue(rotate.angleProperty(), 15)),
-                new KeyFrame(Duration.millis(300), new KeyValue(rotate.angleProperty(), -15)),
-                new KeyFrame(Duration.millis(450), new KeyValue(rotate.angleProperty(), 10)),
-                new KeyFrame(Duration.millis(600), new KeyValue(rotate.angleProperty(), -10)),
-                new KeyFrame(Duration.millis(750), new KeyValue(rotate.angleProperty(), 5)),
-                new KeyFrame(Duration.millis(900), new KeyValue(rotate.angleProperty(), 0))
-        );
-        timeline.setCycleCount(1);
-
-        icon.setOnMouseEntered(event -> {
-            icon.setEffect(new DropShadow(10, Color.GRAY));
-            timeline.playFromStart();
-        });
-        icon.setOnMouseExited(event -> {
-            icon.setEffect(null);
-            rotate.setAngle(0);
-        });
-    }
-
-    private void setupGifAnimation(ImageView gif) {
-        if (gif == null) {
-            System.out.println("Warning: homeGif is null");
-            return;
-        }
-        Scale scale = new Scale(1, 1);
-        gif.getTransforms().add(scale);
-
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.ZERO,
-                        new KeyValue(scale.xProperty(), 1),
-                        new KeyValue(scale.yProperty(), 1)),
-                new KeyFrame(Duration.millis(300),
-                        new KeyValue(scale.xProperty(), 1.1),
-                        new KeyValue(scale.yProperty(), 1.1)),
-                new KeyFrame(Duration.millis(600),
-                        new KeyValue(scale.xProperty(), 1.1),
-                        new KeyValue(scale.yProperty(), 1.1)),
-                new KeyFrame(Duration.millis(900),
-                        new KeyValue(scale.xProperty(), 1),
-                        new KeyValue(scale.yProperty(), 1))
-        );
-        timeline.setCycleCount(1);
-
-        gif.setOnMouseEntered(event -> {
-            gif.setEffect(new DropShadow(10, Color.GRAY));
-            timeline.playFromStart();
-        });
-        gif.setOnMouseExited(event -> {
-            gif.setEffect(null);
-            scale.setX(1);
-            scale.setY(1);
-        });
-    }
-    //---------------------------------------------------------------------------------------------------------------------------------------------//
     @FXML
     protected void ToHome2(MouseEvent event) throws IOException {
         UserSession session = UserSession.getInstance();

@@ -91,8 +91,6 @@ public class SettingsController {
     @FXML
     private ImageView homeGif;
 
-    @FXML
-    private Label AccountUser3;
 
 
 // Mahmoud
@@ -108,6 +106,9 @@ public class SettingsController {
     @FXML private Button saveButton;
     @FXML private Button logoutButton;
     @FXML private Button toggleThemeButton; // الزر دا هيفضل موجود لكن مش هيستخدم
+    @FXML private ImageView HomeImage;
+    @FXML private Label AccountUser3;
+
 
     private String currentUsername;
     private String newImagePath;
@@ -120,6 +121,14 @@ public class SettingsController {
         UserSession session = UserSession.getInstance();
         String username = session.getUsername();
         AccountUser3.setText(username);
+
+        database_BankSystem.UserDetails userDetails = database_BankSystem.getUserDetails(username);
+        String imagePath = userDetails.getProfileImage();
+        if (imagePath != null && !imagePath.isEmpty()) {
+            HomeImage.setImage(new Image("file:" + imagePath));
+        }
+
+
 
         setupHomeAnimation(homeIcon, homeLabel);
         setupUserAnimation(userIcon, userLabel);

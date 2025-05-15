@@ -116,6 +116,10 @@ public class mapController {
 
     @FXML
     private ImageView homeGif;
+
+    @FXML
+    private ImageView HomeImage;
+
     //-------------------------------------------------------------------------------------------------------------
 
     @FXML
@@ -125,6 +129,12 @@ public class mapController {
         UserSession session = UserSession.getInstance();
         String username = session.getUsername();
         AccountUser.setText(username);
+
+        database_BankSystem.UserDetails userDetails = database_BankSystem.getUserDetails(username);
+        String imagePath = userDetails.getProfileImage();
+        if (imagePath != null && !imagePath.isEmpty()) {
+            HomeImage.setImage(new Image("file:" + imagePath));
+        }
 
         // تحميل صورة الخريطة
         worldMap.setImage(new Image(getClass().getResource("/E-MAP.png").toExternalForm()));

@@ -6,21 +6,21 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
  class database_BankSystem {
-    // سلسلة الاتصال مع مهلة 10 ثوانٍ لتجنب قفل قاعدة البيانات
+    // Database URL with busy_timeout to handle locking
     private static final String DB_URL = "jdbc:sqlite:bank.db?busy_timeout=10000";
     private static final int SALT_LENGTH = 16;
     private static final int ITERATIONS = 65536;
     private static final int KEY_LENGTH = 256;
     private static final int CODE_LENGTH = 6;
 
-    // فئات UserDetails, Transaction, Transfer كما هي
+    // UserDetails class
     public static class UserDetails {
         private String fullName;
         private String email;
@@ -46,6 +46,7 @@ import java.util.Map;
         public String getProfileImage() { return profileImage; }
     }
 
+    // Transaction class
     public static class Transaction {
         private int id;
         private String type;
@@ -70,6 +71,7 @@ import java.util.Map;
         }
     }
 
+    // Transfer class
     public static class Transfer {
         private int id;
         private String fromUser;
@@ -100,7 +102,7 @@ import java.util.Map;
         }
     }
 
-    // إنشاء الجداول مع إضافة عمود status لجميع جداول الدفع
+    // Create database tables
     public static void createTables() {
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement stmt = conn.createStatement()) {
@@ -266,6 +268,17 @@ import java.util.Map;
                     )
                     """;
 
+            String cardsTable = """
+                    CREATE TABLE IF NOT EXISTS cards (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        user_id INTEGER NOT NULL,
+                        card_type TEXT NOT NULL,
+                        amount REAL NOT NULL,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        FOREIGN KEY (user_id) REFERENCES users(id)
+                    )
+                    """;
+
             stmt.execute(usersTable);
             stmt.execute(verificationCodesTable);
             stmt.execute(transactionsTable);
@@ -279,15 +292,16 @@ import java.util.Map;
             stmt.execute(educationPaymentsTable);
             stmt.execute(insurancePaymentsTable);
             stmt.execute(otherPaymentsTable);
+            stmt.execute(cardsTable);
 
-            // إضافة الأعمدة المطلوبة إذا لم تكن موجودة
+            // Add columns if not exists
             addColumnIfNotExists(conn, "users", "profile_image", "TEXT");
             addColumnIfNotExists(conn, "users", "total_balance", "REAL DEFAULT 0");
             addColumnIfNotExists(conn, "users", "salt", "TEXT");
             addColumnIfNotExists(conn, "users", "last_login", "TEXT");
             addColumnIfNotExists(conn, "users", "is_verified", "BOOLEAN NOT NULL DEFAULT 0");
 
-            // إضافة عمود status لجداول الدفع إذا لم يكن موجودًا
+            // Add status column to payment tables
             String[] paymentTables = {
                     "investments", "bills_payments", "mobile_top_ups", "credit_card_payments",
                     "government_services", "donations", "education_payments", "insurance_payments", "other_payments"
@@ -303,7 +317,7 @@ import java.util.Map;
         }
     }
 
-    // دالة لإضافة عمود إذا لم يكن موجودًا
+    // Helper method to add a column if it doesn't exist
     private static void addColumnIfNotExists(Connection conn, String tableName, String columnName, String columnType) {
         try {
             DatabaseMetaData meta = conn.getMetaData();
@@ -320,7 +334,7 @@ import java.util.Map;
         }
     }
 
-    // دالة لجلب مجموع المبالغ من جدول معين
+    // Get total amount from a specific table
     private static double getTotalByTable(String tableName, int userId) {
         String sql = "SELECT SUM(amount) as total FROM " + tableName + " WHERE user_id = ? AND status = 'completed'";
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -340,7 +354,7 @@ import java.util.Map;
         }
     }
 
-    // دالة لجلب البيانات حسب الفئات للـ Pie Chart
+    // Get payment totals by category for pie chart
     public static List<Object[]> getPaymentTotalsByCategory(int userId) {
         List<Object[]> data = new ArrayList<>();
         String[] tables = {
@@ -356,13 +370,11 @@ import java.util.Map;
         double[] amounts = new double[tables.length];
 
         try (Connection conn = DriverManager.getConnection(DB_URL)) {
-            // جمع إجمالي المبالغ من كل جدول
             for (int i = 0; i < tables.length; i++) {
                 amounts[i] = getTotalByTable(tables[i], userId);
                 totalAmount += amounts[i];
             }
 
-            // تحويل المبالغ إلى نسب مئوية
             if (totalAmount > 0) {
                 for (int i = 0; i < tables.length; i++) {
                     if (amounts[i] > 0) {
@@ -378,7 +390,7 @@ import java.util.Map;
         return data;
     }
 
-    // دالة لجلب إجمالي الإيداعات لدعم الـ Progress Bars
+    // Get total deposits for progress bars
     public static double getTotalDeposits(String username) {
         int userId = getUserId(username);
         if (userId == -1) return 0.0;
@@ -401,7 +413,7 @@ import java.util.Map;
         }
     }
 
-    // دالة لجلب إجمالي السحوبات لدعم الـ Progress Bars
+    // Get total withdrawals for progress bars
     public static double getTotalWithdrawals(String username) {
         int userId = getUserId(username);
         if (userId == -1) return 0.0;
@@ -424,7 +436,7 @@ import java.util.Map;
         }
     }
 
-    // دالة لجلب إجمالي الدفعات لدعم الـ Progress Bars
+    // Get total payments for progress bars
     public static double getTotalPayments(String username) {
         int userId = getUserId(username);
         if (userId == -1) return 0.0;
@@ -457,64 +469,155 @@ import java.util.Map;
         return total;
     }
 
-    // دالة لجلب بيانات المعاملات اليومية لدعم الـ Bar Chart
+    // Get daily transactions for bar chart
     public static List<Object[]> getDailyTransactions(String username) {
         List<Object[]> dailyData = new ArrayList<>();
         int userId = getUserId(username);
-        if (userId == -1) return dailyData;
+        if (userId == -1) {
+            System.out.println("❌ User not found: " + username);
+            return dailyData;
+        }
 
+        // Use current date dynamically
+        LocalDate today = LocalDate.now();
+        LocalDate startDate = today.minusDays(6); // Start of the week (7 days total)
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String startDateStr = startDate.format(formatter);
+        String endDateStr = today.format(formatter);
+
+        // Fetch data from transactions table for the last 7 days
         String sql = """
-            SELECT DATE(date) as transaction_date, SUM(amount) as total
-            FROM transactions
-            WHERE user_id = ? AND type IN ('deposit', 'withdraw', 'bill_payment', 'mobile_top_up', 'credit_card_payment', 'government_service', 'donation', 'education_payment', 'insurance_payment', 'other_payment')
-            GROUP BY DATE(date)
-            ORDER BY transaction_date DESC
-            LIMIT 7
-            """;
+        SELECT DATE(date) as transaction_date, SUM(amount) as total
+        FROM transactions
+        WHERE user_id = ? 
+        AND type IN ('deposit', 'withdraw', 'bill_payment', 'mobile_top_up', 'credit_card_payment', 'government_service', 'donation', 'education_payment', 'insurance_payment', 'other_payment')
+        AND DATE(date) BETWEEN ? AND ?
+        GROUP BY DATE(date)
+        ORDER BY transaction_date
+        """;
+
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, userId);
+            pstmt.setString(2, startDateStr);
+            pstmt.setString(3, endDateStr);
+
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     String date = rs.getString("transaction_date");
                     double total = rs.getDouble("total");
-                    dailyData.add(new Object[]{date.substring(8, 10), total}); // أخذ اليوم فقط (DD)
+                    dailyData.add(new Object[]{"", total, date}); // First element empty (filled with day name later)
                 }
             }
         } catch (SQLException e) {
             System.out.println("❌ Error retrieving daily transactions: " + e.getMessage());
             e.printStackTrace();
+            return dailyData;
         }
-        return dailyData;
+
+        // Fill missing days with 0 to ensure 7 days
+        List<Object[]> finalData = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            LocalDate currentDate = startDate.plusDays(i);
+            String currentDateStr = currentDate.format(formatter);
+            boolean found = false;
+            for (Object[] data : dailyData) {
+                if (((String) data[2]).equals(currentDateStr)) {
+                    finalData.add(data);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                finalData.add(new Object[]{"", 0.0, currentDateStr});
+            }
+        }
+
+        return finalData;
     }
 
-    // دالة تحديث وقت آخر تسجيل دخول
-    public static boolean updateLastLogin(String username) {
-        if (!userExists(username)) {
-            System.out.println("❌ User does not exist: " + username);
-            return false;
+    // Get monthly income
+    public static double getMonthlyIncome(String username, String month) {
+        double total = 0;
+        try {
+            // Ensure month is two digits
+            month = String.format("%02d", Integer.parseInt(month));
+        } catch (NumberFormatException e) {
+            System.out.println("❌ Invalid month format: " + month);
+            return 0.0;
         }
 
-        String sql = "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE username = ?";
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, username);
-            int rowsUpdated = pstmt.executeUpdate();
-            if (rowsUpdated > 0) {
-                System.out.println("✅ Last login updated for user: " + username);
-                return true;
-            } else {
-                System.out.println("❌ No rows updated for user: " + username);
-                return false;
+        try (Connection conn = DriverManager.getConnection(DB_URL)) {
+            int userId = getUserId(username);
+            if (userId == -1) {
+                System.out.println("❌ User not found for monthly income: " + username);
+                return 0.0;
+            }
+
+            String query = "SELECT SUM(amount) FROM transactions " +
+                    "WHERE user_id = ? AND type = 'income' " +
+                    "AND strftime('%m', date) = ?";
+
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setInt(1, userId);
+                pstmt.setString(2, month);
+
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        total = rs.getDouble(1);
+                        System.out.println("✅ Monthly income retrieved for " + username + " (month " + month + "): " + total);
+                    }
+                }
             }
         } catch (SQLException e) {
-            System.out.println("❌ Error updating last login: " + e.getMessage());
+            System.out.println("❌ Error getting monthly income for " + username + ": " + e.getMessage());
             e.printStackTrace();
-            return false;
         }
+        return total;
     }
 
-    // باقي الدوال دون تغيير
+    // Get monthly expenses
+    public static double getMonthlyExpenses(String username, String month) {
+        double total = 0;
+        try {
+            // Ensure month is two digits
+            month = String.format("%02d", Integer.parseInt(month));
+        } catch (NumberFormatException e) {
+            System.out.println("❌ Invalid month format: " + month);
+            return 0.0;
+        }
+
+        try (Connection conn = DriverManager.getConnection(DB_URL)) {
+            int userId = getUserId(username);
+            if (userId == -1) {
+                System.out.println("❌ User ID not found for username: " + username);
+                return 0;
+            }
+
+            String query = "SELECT SUM(amount) FROM transactions " +
+                    "WHERE user_id = ? " +
+                    "AND type IN ('expense', 'bill_payment', 'insurance_payment', 'donation', 'government_service', 'other_payment', 'mobile_top_up') " +
+                    "AND strftime('%m', date) = ?";
+
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setInt(1, userId);
+                pstmt.setString(2, month);
+
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        total = rs.getDouble(1);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ Error getting monthly expenses for " + username + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+        return total;
+    }
+
+    // Register a new user
     public static boolean registerUser(String username, String password, String name, String email,
                                        String mobile, String nationalId, String imagePath, double initialBalance) {
         if (username == null || username.trim().isEmpty() || password == null || password.trim().isEmpty()) {
@@ -555,6 +658,7 @@ import java.util.Map;
         }
     }
 
+    // Get username by email
     public static String getUsernameByEmail(String email) {
         if (email == null || email.trim().isEmpty()) {
             System.out.println("❌ Cannot retrieve username: Email is null or empty.");
@@ -582,6 +686,7 @@ import java.util.Map;
         }
     }
 
+    // Get email by username
     public static String getEmailByUsername(String username) {
         if (username == null || username.trim().isEmpty()) {
             System.out.println("❌ Cannot retrieve email: Username is null or empty.");
@@ -614,6 +719,7 @@ import java.util.Map;
         }
     }
 
+    // Update user password
     public static boolean updatePassword(String username, String newPassword) {
         if (username == null || username.trim().isEmpty() || newPassword == null || newPassword.trim().isEmpty()) {
             System.out.println("❌ Cannot update password: Username or new password is null or empty.");
@@ -650,6 +756,7 @@ import java.util.Map;
         }
     }
 
+    // Generate and save verification code
     public static String generateAndSaveVerificationCode(String username) {
         if (username == null || username.trim().isEmpty()) {
             System.out.println("❌ Cannot generate verification code: Username is null or empty.");
@@ -657,7 +764,7 @@ import java.util.Map;
         }
 
         if (!userExists(username)) {
-            System.out.println("❌ Cannot generate verification code: User " + username + " does not exist in the database.");
+            System.out.println("❌ Cannot generate verification code: User " + username + " does not exist.");
             return null;
         }
 
@@ -684,6 +791,7 @@ import java.util.Map;
         }
     }
 
+    // Get verification code
     public static String getVerificationCode(String username) {
         String sql = "SELECT code FROM verification_codes WHERE username = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -706,6 +814,7 @@ import java.util.Map;
         }
     }
 
+    // Delete verification code
     private static void deleteVerificationCode(String username) {
         String sql = "DELETE FROM verification_codes WHERE username = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -719,6 +828,7 @@ import java.util.Map;
         }
     }
 
+    // Verify code
     public static boolean verifyCode(String username, String code) {
         String storedCode = getVerificationCode(username);
         if (storedCode == null) {
@@ -754,6 +864,7 @@ import java.util.Map;
         }
     }
 
+    // Check if user is verified
     public static boolean isUserVerified(String username) {
         String sql = "SELECT is_verified FROM users WHERE username = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -771,6 +882,7 @@ import java.util.Map;
         return false;
     }
 
+    // User login
     public static boolean loginUser(String username, String password) {
         String sql = "SELECT password, salt, is_verified FROM users WHERE username = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -802,6 +914,7 @@ import java.util.Map;
         return false;
     }
 
+    // Generate salt for password hashing
     private static byte[] generateSalt() {
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[SALT_LENGTH];
@@ -809,6 +922,7 @@ import java.util.Map;
         return salt;
     }
 
+    // Hash password
     private static String hashPassword(String password, byte[] salt) {
         try {
             PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt, ITERATIONS, KEY_LENGTH);
@@ -820,6 +934,7 @@ import java.util.Map;
         }
     }
 
+    // Get user details by username
     public static UserDetails getUserDetails(String username) {
         String sql = "SELECT full_name, email, mobile, national_id, total_balance, profile_image FROM users WHERE username = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -844,6 +959,7 @@ import java.util.Map;
         return null;
     }
 
+    // Get user details by ID
     public static UserDetails getUserDetailsById(int userId) {
         String sql = "SELECT full_name, email, mobile, national_id, total_balance, profile_image FROM users WHERE id = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -868,6 +984,101 @@ import java.util.Map;
         return null;
     }
 
+    // Get total balance (Fixed: Corrected column name from user_id to id)
+    public static double getTotalBalance(String username) {
+        int userId = getUserId(username);
+        if (userId == -1) {
+            System.out.println("❌ User not found: " + username);
+            return 0.0;
+        }
+
+        String sql = "SELECT total_balance FROM users WHERE id = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    double balance = rs.getDouble("total_balance");
+                    System.out.println("✅ Total balance retrieved for " + username + ": " + balance);
+                    return balance;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ Error retrieving total balance for " + username + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+        return 0.0;
+    }
+
+    // Get daily withdrawals
+    public static List<Object[]> getDailyWithdrawals(String username) {
+        List<Object[]> dailyData = new ArrayList<>();
+        int userId = getUserId(username);
+        if (userId == -1) {
+            System.out.println("❌ User not found: " + username);
+            return dailyData;
+        }
+
+        // Use current date dynamically
+        LocalDate today = LocalDate.now();
+        LocalDate startDate = today.minusDays(6); // Start of the week (7 days total)
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String startDateStr = startDate.format(formatter);
+        String endDateStr = today.format(formatter);
+
+        // Fetch only withdrawals for the last 7 days
+        String sql = """
+            SELECT DATE(date) as transaction_date, SUM(amount) as total
+            FROM transactions
+            WHERE user_id = ? 
+            AND type = 'withdraw'
+            AND DATE(date) BETWEEN ? AND ?
+            GROUP BY DATE(date)
+            ORDER BY transaction_date
+            """;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+            pstmt.setString(2, startDateStr);
+            pstmt.setString(3, endDateStr);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    String date = rs.getString("transaction_date");
+                    double total = rs.getDouble("total");
+                    dailyData.add(new Object[]{"", total, date}); // First element empty (filled with day name later)
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ Error retrieving daily withdrawals: " + e.getMessage());
+            e.printStackTrace();
+            return dailyData;
+        }
+
+        // Fill missing days with 0 to ensure 7 days
+        List<Object[]> finalData = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            LocalDate currentDate = startDate.plusDays(i);
+            String currentDateStr = currentDate.format(formatter);
+            boolean found = false;
+            for (Object[] data : dailyData) {
+                if (((String) data[2]).equals(currentDateStr)) {
+                    finalData.add(data);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                finalData.add(new Object[]{"", 0.0, currentDateStr});
+            }
+        }
+
+        return finalData;
+    }
+
+    // Get user balance
     public static double getBalance(String username) {
         String sql = "SELECT total_balance FROM users WHERE username = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -885,6 +1096,7 @@ import java.util.Map;
         return -1;
     }
 
+    // Get recent transactions
     public static List<Transaction> getRecentTransactions(String username, int limit) {
         List<Transaction> transactions = new ArrayList<>();
         int userId = getUserId(username);
@@ -915,6 +1127,7 @@ import java.util.Map;
         return transactions;
     }
 
+    // Get recent transfers
     public static List<Transfer> getRecentTransfers(String username, int limit) {
         List<Transfer> transfers = new ArrayList<>();
         String sql = "SELECT id, from_user, to_user, amount, status, date FROM transfers WHERE from_user = ? OR to_user = ? ORDER BY date DESC LIMIT ?";
@@ -942,6 +1155,7 @@ import java.util.Map;
         return transfers;
     }
 
+    // Deposit money
     public static boolean deposit(String username, double amount) {
         if (amount <= 0) {
             System.out.println("❌ Deposit amount must be positive.");
@@ -964,6 +1178,7 @@ import java.util.Map;
         return false;
     }
 
+    // Withdraw money
     public static boolean withdraw(String username, double amount) {
         if (amount <= 0) {
             System.out.println("❌ Withdrawal amount must be positive.");
@@ -986,6 +1201,7 @@ import java.util.Map;
         return false;
     }
 
+    // Transfer money between users
     public static boolean transfer(String fromUsername, String toUsername, double amount) {
         if (amount <= 0) {
             System.out.println("❌ Transfer amount must be positive.");
@@ -1023,6 +1239,7 @@ import java.util.Map;
         return recordTransfer(fromUsername, toUsername, amount, "completed");
     }
 
+    // Pay bill
     public static boolean transferBill(String username, String billType, String customerId, double amount) {
         if (amount <= 0) {
             System.out.println("❌ Bill amount must be positive.");
@@ -1073,6 +1290,7 @@ import java.util.Map;
         }
     }
 
+    // Mobile top-up
     public static boolean transferMobileTopUp(String username, String network, String mobileNumber, double amount) {
         if (amount <= 0) {
             System.out.println("❌ Top-up amount must be positive.");
@@ -1123,6 +1341,7 @@ import java.util.Map;
         }
     }
 
+    // Credit card payment
     public static boolean transferCreditCard(String username, String cardType, double amount) {
         if (amount <= 0) {
             System.out.println("❌ Payment amount must be positive.");
@@ -1172,6 +1391,7 @@ import java.util.Map;
         }
     }
 
+    // Government service payment
     public static boolean transferGovernmentService(String username, String serviceType, String serviceNumber, double amount) {
         if (amount <= 0) {
             System.out.println("❌ Service amount must be positive.");
@@ -1222,6 +1442,7 @@ import java.util.Map;
         }
     }
 
+    // Donation
     public static boolean transferDonation(String username, String charity, double amount) {
         if (amount <= 0) {
             System.out.println("❌ Donation amount must be positive.");
@@ -1271,6 +1492,7 @@ import java.util.Map;
         }
     }
 
+    // Education payment
     public static boolean transferEducationPayment(String username, String facility, String studentId, double amount) {
         if (amount <= 0) {
             System.out.println("❌ Education payment amount must be positive.");
@@ -1321,6 +1543,7 @@ import java.util.Map;
         }
     }
 
+    // Insurance payment
     public static boolean transferInsurancePayment(String username, String provider, String policyNumber, double amount) {
         if (amount <= 0) {
             System.out.println("❌ Insurance payment amount must be positive.");
@@ -1371,6 +1594,7 @@ import java.util.Map;
         }
     }
 
+    // Other payment
     public static boolean transferOtherPayment(String username, String category, String payeeName, double amount) {
         if (amount <= 0) {
             System.out.println("❌ Payment amount must be positive.");
@@ -1421,7 +1645,8 @@ import java.util.Map;
         }
     }
 
-    private static boolean updateBalance(String username, double newBalance) {
+    // Update user balance
+    public static boolean updateBalance(String username, double newBalance) {
         String sql = "UPDATE users SET total_balance = ? WHERE username = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -1442,6 +1667,7 @@ import java.util.Map;
         }
     }
 
+    // Check if user exists
     public static boolean userExists(String username) {
         String sql = "SELECT 1 FROM users WHERE username = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -1457,6 +1683,7 @@ import java.util.Map;
         }
     }
 
+    // Get user ID by username
     public static int getUserId(String username) {
         String sql = "SELECT id FROM users WHERE username = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -1468,12 +1695,13 @@ import java.util.Map;
                 }
             }
         } catch (SQLException e) {
-            System.out.println("❌ Error retrieving user ID: " + e.getMessage());
+            System.out.println("❌ Error retrieving user ID for " + username + ": " + e.getMessage());
             e.printStackTrace();
         }
         return -1;
     }
 
+    // Update user details
     public static boolean updateUserDetails(String username, String fullName, String email, String mobile, String profileImagePath) {
         if (!userExists(username)) {
             System.out.println("❌ User does not exist: " + username);
@@ -1502,6 +1730,7 @@ import java.util.Map;
         }
     }
 
+    // Record transaction
     public static boolean recordTransaction(int userId, String type, double amount) {
         String sql = "INSERT INTO transactions (user_id, type, amount) VALUES (?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -1519,6 +1748,7 @@ import java.util.Map;
         }
     }
 
+    // Record transfer
     public static boolean recordTransfer(String fromUsername, String toUsername, double amount, String status) {
         if (!userExists(fromUsername) || !userExists(toUsername)) {
             System.out.println("❌ One or both users do not exist.");
@@ -1541,6 +1771,33 @@ import java.util.Map;
         }
     }
 
+    // Update last login
+    public static boolean updateLastLogin(String username) {
+        if (!userExists(username)) {
+            System.out.println("❌ User does not exist: " + username);
+            return false;
+        }
+
+        String sql = "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE username = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, username);
+            int rowsUpdated = pstmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("✅ Last login updated for user: " + username);
+                return true;
+            } else {
+                System.out.println("❌ No rows updated for user: " + username);
+                return false;
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ Error updating last login: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Get last login
     public static String getLastLogin(String username) {
         String sql = "SELECT last_login FROM users WHERE username = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -1558,6 +1815,7 @@ import java.util.Map;
         return null;
     }
 
+    // Get username by ID
     public static String getUsernameById(String id) {
         if (id == null || id.trim().isEmpty()) {
             System.out.println("❌ Cannot retrieve username: ID is null or empty.");
@@ -1588,5 +1846,58 @@ import java.util.Map;
             e.printStackTrace();
             return null;
         }
+    }
+
+    // Add card
+    public static boolean addCard(String username, String cardType, double amount) {
+        int userId = getUserId(username);
+        if (userId == -1) {
+            System.out.println("❌ User not found: " + username);
+            return false;
+        }
+        String sql = "INSERT INTO cards (user_id, card_type, amount) VALUES (?, ?, ?)";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+            pstmt.setString(2, cardType);
+            pstmt.setDouble(3, amount);
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("✅ Card added for user: " + username + ", Type: " + cardType + ", Amount: " + amount);
+                return true;
+            } else {
+                System.out.println("❌ Failed to add card for user: " + username);
+                return false;
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ Error adding card: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Get user card count
+    public static int getUserCardCount(String username) {
+        int userId = getUserId(username);
+        if (userId == -1) {
+            System.out.println("❌ User not found: " + username);
+            return 0;
+        }
+        String sql = "SELECT COUNT(*) FROM cards WHERE user_id = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt(1);
+                    System.out.println("✅ Retrieved card count for user " + username + ": " + count);
+                    return count;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ Error retrieving card count: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return 0;
     }
 }
