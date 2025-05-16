@@ -82,8 +82,8 @@ public class SignupController {
             valid = false;
         } else usernameError.setText("");
 
-        if (passwordField.getText().length() < 6) {
-            passwordError.setText("Password must be at least 6 chars");
+        if (passwordField.getText().length() != 6) {
+            passwordError.setText("Password must be at  6 chars");
             valid = false;
         } else passwordError.setText("");
 

@@ -1289,6 +1289,22 @@ import java.util.List;
             return false;
         }
     }
+     public static String[] getUserPasswordAndSalt(String username) {
+         String sql = "SELECT password, salt FROM users WHERE username = ?";
+         try (Connection conn = DriverManager.getConnection(DB_URL);
+              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             pstmt.setString(1, username);
+             try (ResultSet rs = pstmt.executeQuery()) {
+                 if (rs.next()) {
+                     return new String[]{rs.getString("password"), rs.getString("salt")};
+                 }
+             }
+         } catch (SQLException e) {
+             System.out.println("❌ Error retrieving password and salt: " + e.getMessage());
+             e.printStackTrace();
+         }
+         return null;
+     }
 
     // Mobile top-up
     public static boolean transferMobileTopUp(String username, String network, String mobileNumber, double amount) {
